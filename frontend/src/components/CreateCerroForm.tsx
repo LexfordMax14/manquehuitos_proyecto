@@ -42,7 +42,10 @@ export const CreateCerroForm = ({ isOpen, onClose }: CreateCerroFormProps) => {
         <textarea placeholder="Descripción" onChange={(e) => setCerro({...cerro, descripcion: e.target.value})} required />
         <input type="text" placeholder="Ubicación" onChange={(e) => setCerro({...cerro, ubicacion: e.target.value})} required />
         <input type="file" multiple onChange={(e) => setCerro({...cerro, imagenes: e.target.files})} />
-        <button type="submit">Crear</button>
+        <div className="form-buttons">
+          <button type="button" className="cancel-button" onClick={onClose}>Cancelar</button>
+          <button type="submit">Crear</button>
+        </div>
       </form>
     </div>
   );
