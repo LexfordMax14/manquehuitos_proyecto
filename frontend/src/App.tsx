@@ -1,7 +1,8 @@
-import { Routes } from 'react-router-dom'
-import './App.css'
+import { Route, Routes } from 'react-router-dom'
 import Header from './components/Header'
 import DirectorioCerros from './components/DirectoriosCerro'
+import Cerro from './pages/Cerro'
+import CreateCerroForm from './pages/CreateCerroForm'
 
 function App() {
   return (
@@ -9,12 +10,11 @@ function App() {
       <Header />
 
       <Routes>
-        //rutas 
+        {/* Las rutas fijas van antes que la del parametro. */}
+        <Route path="/" element={<DirectorioCerros />} />
+        <Route path="/form" element={<CreateCerroForm />} />
+        <Route path="/:id" element={<Cerro />} />
       </Routes>
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-
-      <DirectorioCerros />
     </>
   )
 }

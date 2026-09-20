@@ -4,15 +4,14 @@ import { Link } from 'react-router-dom'
 
 function Header() {
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#d9bfb0' }}>
+    <AppBar position="sticky">
       <Toolbar sx={{ gap: 1 }}>
         <Typography
           variant="h6"
           component={Link}
           to="/"
           sx={{
-            color: '#800000',
-            fontWeight: 'bold',
+            color: 'inherit',
             textDecoration: 'none',
             flexGrow: 1,
           }}
@@ -20,12 +19,12 @@ function Header() {
           Manquehuapp
         </Typography>
 
-        <Button component={Link} to="/" sx={{ color: '#800000' }}>
-          Threads
+        <Button component={Link} to="/" sx={{ color: 'inherit' }}>
+          Cerros
         </Button>
 
         <Tooltip title="Mi perfil">
-          <IconButton component={Link} to="/perfil" aria-label="Mi perfil" sx={{ color: '#800000' }}>
+          <IconButton component={Link} to="/perfil" aria-label="Mi perfil" sx={{ color: 'inherit' }}>
             <AccountCircle />
           </IconButton>
         </Tooltip>
@@ -33,12 +32,12 @@ function Header() {
         <Tooltip title="Cerrar sesión">
           <IconButton
             aria-label="Cerrar sesión"
-            sx={{ color: '#800000' }}
+            onClick={() => console.log('cerrar sesión')}
+            sx={{ color: 'inherit' }}
           >
-            <Logout />|
+            <Logout />
           </IconButton>
         </Tooltip>
-
       </Toolbar>
     </AppBar>
   )
