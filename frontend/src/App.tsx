@@ -3,6 +3,7 @@ import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import './App.css'
+import DirectorioCerros from './components/DirectoriosCerro'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -115,6 +116,8 @@ function App() {
 
       <div className="ticks"></div>
       <section id="spacer"></section>
+
+      <DirectorioCerros />
     </>
   )
 }
