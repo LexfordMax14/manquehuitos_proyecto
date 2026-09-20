@@ -16,3 +16,8 @@ const getAll = () => {
 const create = (newObject: Omit<Comentario, "id">) => {
   return axios.post(baseUrl, newObject).then((request) => request.data);
 };
+
+export default {
+  getAll,
+  create,
+};
