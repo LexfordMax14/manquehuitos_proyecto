@@ -1,4 +1,4 @@
-export interface Comentario {
+export interface ComentarioType {
   id: number
   cerro: number
   contenido: string

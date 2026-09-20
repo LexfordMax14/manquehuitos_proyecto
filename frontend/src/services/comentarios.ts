@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Comentario } from "../types/comentario";
+import type { ComentarioType } from "../types/comentario";
 const baseUrl = "http://localhost:3001/notes";
 
 const getAll = () => {
@@ -13,7 +13,7 @@ const getAll = () => {
   return request.then((response) => response.data.concat(nonExisting));
 };
 
-const create = (newObject: Omit<Comentario, "id">) => {
+const create = (newObject: Omit<ComentarioType, "id">) => {
   return axios.post(baseUrl, newObject).then((request) => request.data);
 };
 

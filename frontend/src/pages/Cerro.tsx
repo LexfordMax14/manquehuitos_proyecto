@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import type { DetalleCerro } from '../types/detalleCerro'
 import cerros from '../services/cerros'
 import serviceComentario from '../services/comentarios'
-import type { Comentario } from '../types/comentario'
+import type { ComentarioType } from '../types/comentario'
 
 const Cerro = () => {
   const { id } = useParams()
@@ -13,7 +13,7 @@ const Cerro = () => {
   const [mostrarCaja, setCaja] = useState<boolean>(false);
   const [nuevoAutor, setNuevoAutor] = useState<string>("");
   const [nuevoComentario, setNuevoComentario] = useState<string>("");
-  const [cajaComentarios, setComentarios] = useState<Comentario[]>([])
+  const [cajaComentarios, setComentarios] = useState<ComentarioType[]>([])
 
   useEffect(() => {
     serviceComentario.getAll().then((data) => {
@@ -32,7 +32,7 @@ const Cerro = () => {
 
   const addComentario = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const comentarioObject: Omit<Comentario, "id"> = {
+    const comentarioObject: Omit<ComentarioType, "id"> = {
       cerro: cerroId,
       contenido: nuevoComentario,
       autor: nuevoAutor
