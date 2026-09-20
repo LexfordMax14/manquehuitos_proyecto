@@ -8,8 +8,8 @@
     "descansos": 3,
     "banos": true,
     "imagenes": [
-      "https://example.com/manquehuito-1.jpg",
-      "https://example.com/manquehuito-2.jpg"
+      "/images/manquehuito-1.webp",
+      "/images/manquehuito-2.webp"
     ],
     "ubicacion": "Lo Barnechea, Santiago",
     "createdAt": "2026-09-01T10:30:00Z",
