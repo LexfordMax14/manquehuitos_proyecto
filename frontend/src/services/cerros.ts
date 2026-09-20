@@ -1,4 +1,3 @@
-import axios from 'axios'
 import cerros from "../assets/ejemplo.json";
 import type { DetalleCerro } from '../types/detalleCerro'
 

@@ -1,127 +1,152 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import {
+  Box,
+  Button,
+  Chip,
+  Container,
+  Divider,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material'
 import type { DetalleCerro } from '../types/detalleCerro'
 import cerros from '../services/cerros'
-import serviceComentario from '../services/comentarios'
 import type { ComentarioType } from '../types/comentario'
-import Comentario from "../components/Comentario";
+import Comentario from '../components/Comentario'
 
 const Cerro = () => {
   const { id } = useParams()
-  const cerroId = Number(id);
+  const cerroId = Number(id)
   const [cerro, setCerro] = useState<DetalleCerro | null>(null)
 
-  const [mostrarCaja, setCaja] = useState<boolean>(false);
-  const [nuevoAutor, setNuevoAutor] = useState<string>("");
-  const [nuevoComentario, setNuevoComentario] = useState<string>("");
+  const [mostrarCaja, setCaja] = useState<boolean>(false)
+  const [nuevoAutor, setNuevoAutor] = useState<string>('')
+  const [nuevoComentario, setNuevoComentario] = useState<string>('')
   const [cajaComentarios, setComentarios] = useState<ComentarioType[]>([])
 
-  useEffect(() => {
-    serviceComentario.getAll().then((data) => {
-      console.log("la llamada termino");
-      setComentarios(data);
-    });
-  }, []);
-
   const handleAutorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setNuevoAutor(event.target.value);
-  };
+    setNuevoAutor(event.target.value)
+  }
 
   const handleComentarioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setNuevoComentario(event.target.value);
-  };
+    setNuevoComentario(event.target.value)
+  }
 
   const addComentario = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const comentarioObject: Omit<ComentarioType, "id"> = {
+    event.preventDefault()
+    const nuevo: ComentarioType = {
+      id: Date.now(),
       cerro: cerroId,
       contenido: nuevoComentario,
-      autor: nuevoAutor
-    };
-    serviceComentario.create(comentarioObject).then((data) => {
-      setComentarios(cajaComentarios.concat(data));
-      setNuevoAutor("");
-      setNuevoComentario("");
-    });
-  };
+      autor: nuevoAutor,
+    }
 
-  const mostrados = mostrarCaja
-  ? cajaComentarios
-  : []
+    setComentarios(cajaComentarios.concat(nuevo))
+    setNuevoAutor('')
+    setNuevoComentario('')
+  }
 
+  const mostrados = mostrarCaja ? cajaComentarios : []
 
   useEffect(() => {
     if (cerroId) {
       setCerro(cerros.getCerro(cerroId))
-      //.then(cerro => setCerro(cerro))
     }
   }, [])
 
   if (!id) return null
-  if (!cerro) return <p>Cargando...</p>
+  if (!cerro) return <Typography sx={{ p: 4 }}>Cargando...</Typography>
 
-  return(
-    <>
-      <div className="details">
-        <h1>{cerro.nombre}</h1>
-        <p>{cerro.createdAt}</p>
-        <p>{cerro.updatedAt}</p>
-        <div className="top-details">
-          <p>{cerro.altura}</p>
-          <p>{cerro.dificultad}</p>
-          <p>{cerro.ubicacion}</p>
-        </div>
-        <img
+  return (
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Paper sx={{ p: { xs: 2, sm: 3 }, mb: 4 }}>
+        <Typography variant="h4" sx={{ color: 'primary.dark', mb: 1 }}>
+          {cerro.nombre}
+        </Typography>
+
+        <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap', mb: 3 }}>
+          <Chip label={`${cerro.altura} m`} color="primary" variant="outlined" />
+          <Chip label={cerro.dificultad} color="secondary" variant="outlined" />
+          <Chip label={cerro.ubicacion} variant="outlined" />
+          <Chip label={`${cerro.descansos} descansos`} variant="outlined" />
+          <Chip label={cerro.banos ? 'Con baños' : 'Sin baños'} variant="outlined" />
+        </Stack>
+
+        <Box
+          component="img"
           src={cerro.imagenes[0]}
-          alt={cerro.nombre}/>
-        <div className="bottom-details">
-          <p>{cerro.descripcion}</p>
-          <p>{cerro.descansos}</p>
-          <p>{cerro.banos}</p>
-        </div>
-        <div className="images-cont">
-          {cerro.imagenes.map((imagen, index) => (
-          <img
-              key={index}
-              src={imagen}
-          />
-          ))}
-        </div>
-      </div>
+          alt={cerro.nombre}
+          sx={{ width: '100%', height: { xs: 220, sm: 360 }, objectFit: 'cover', borderRadius: 2, mb: 3 }}
+        />
 
-      <div>
-        <div>
-          <button onClick={() => setCaja(!mostrarCaja)}>
-          {mostrarCaja ? "Ocultar" : "Mostrar"} comentarios
-          </button>
-        </div>
+        <Typography sx={{ color: 'text.secondary', mb: 3 }}>
+          {cerro.descripcion}
+        </Typography>
 
-        <form onSubmit={addComentario}>
-          <input
-            type="text"
+        {cerro.imagenes.length > 1 && (
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+              gap: 1.5,
+            }}
+          >
+            {cerro.imagenes.slice(1).map((imagen, index) => (
+              <Box
+                key={index}
+                component="img"
+                src={imagen}
+                alt={`${cerro.nombre} ${index + 2}`}
+                sx={{ width: '100%', height: 110, objectFit: 'cover', borderRadius: 1 }}
+              />
+            ))}
+          </Box>
+        )}
+      </Paper>
+
+      <Paper sx={{ p: { xs: 2, sm: 3 } }}>
+        <Stack
+          direction="row"
+          sx={{ gap: 2, alignItems: 'center', justifyContent: 'space-between', mb: 2 }}
+        >
+          <Typography variant="h6" sx={{ color: 'primary.dark' }}>
+            Comentarios ({cajaComentarios.length})
+          </Typography>
+          <Button onClick={() => setCaja(!mostrarCaja)}>
+            {mostrarCaja ? 'Ocultar' : 'Mostrar'}
+          </Button>
+        </Stack>
+
+        <Stack component="form" onSubmit={addComentario} sx={{ gap: 2, mb: 3 }}>
+          <TextField
+            size="small"
+            label="Nombre (opcional)"
             value={nuevoAutor}
-            placeholder="Nombre (opcional)"
             onChange={handleAutorChange}
           />
-          <input
-            type="text"
+          <TextField
+            size="small"
+            label="Escribe un comentario"
+            required
             value={nuevoComentario}
-            placeholder="Pone un comentario"
             onChange={handleComentarioChange}
           />
-          <button type="submit">Publicar comentario</button>
-        </form>
+          <Button type="submit" variant="contained" sx={{ alignSelf: 'flex-end' }}>
+            Publicar
+          </Button>
+        </Stack>
 
-        <ul>
-          {mostrados.map((comentario) => (
-            <Comentario
-              key={comentario.id}
-              comentario={comentario}
-            />
+        <Divider sx={{ mb: 2 }} />
+
+        <Stack component="ul" sx={{ gap: 1.5, listStyle: 'none', p: 0, m: 0 }}>
+          {mostrados.map(comentario => (
+            <Comentario key={comentario.id} comentario={comentario} />
           ))}
-        </ul>
-      </div>
-    </>
+        </Stack>
+      </Paper>
+    </Container>
   )
 }
 

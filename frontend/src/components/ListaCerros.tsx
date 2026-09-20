@@ -1,3 +1,4 @@
+import { Box, Typography } from '@mui/material'
 import type { Cerro } from '../types/cerro'
 import CardCerro from './CardCerro'
 
@@ -7,16 +8,32 @@ interface ListaCerrosProps {
 }
 
 function ListaCerros({ cerros, onSelect }: ListaCerrosProps) {
+  if (cerros.length === 0) {
+    return (
+      <Typography sx={{ color: 'text.secondary', py: 4, textAlign: 'center' }}>
+        No encontramos ningún cerro con ese nombre.
+      </Typography>
+    )
+  }
+
   return (
-    <section className="cerros-grid" aria-label="Lista de cerros">
-      {cerros.map((cerro) => (
+    <Box
+      component="section"
+      aria-label="Lista de cerros"
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+        gap: 3,
+      }}
+    >
+      {cerros.map(cerro => (
         <CardCerro
           key={cerro.id}
           cerro={cerro}
           onSelect={() => onSelect(cerro)}
         />
       ))}
-    </section>
+    </Box>
   )
 }
 

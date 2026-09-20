@@ -1,10 +1,11 @@
 import { useState } from 'react'
+import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material'
 import type { Cerro } from '../types/cerro'
 
 interface CardCerroProps {
   cerro: Cerro
-  // Qué hacer al clickear la tarjeta. La navegación a la nueva ruta la resuelve
-  // quien use este componente (p. ej. onSelect={() => navigate(`/cerros/${cerro.id}`)}).
+  // Qué hacer al clickear la tarjeta. La navegación la resuelve quien use
+  // este componente.
   onSelect: () => void
 }
 
@@ -13,20 +14,46 @@ function CardCerro({ cerro, onSelect }: CardCerroProps) {
   const [imagenFallo, setImagenFallo] = useState(false)
 
   return (
-    <button type="button" onClick={onSelect}>
-      {imagenFallo
-        ? <span>Imagen no disponible</span>
-        : (
-            <img
-              src={cerro.imagen}
-              alt={`Foto del cerro ${cerro.nombre}`}
-              width={200}
-              onError={() => setImagenFallo(true)}
-            />
-          )}
-      <br />
-      <span>{cerro.nombre}</span>
-    </button>
+    <Card sx={{ height: '100%' }}>
+      <CardActionArea
+        onClick={onSelect}
+        sx={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
+      >
+        {imagenFallo
+          ? (
+              <Box
+                sx={{
+                  height: 200,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'action.hover',
+                  color: 'text.secondary',
+                }}
+              >
+                <Typography variant="body2">Imagen no disponible</Typography>
+              </Box>
+            )
+          : (
+              <CardMedia
+                component="img"
+                image={cerro.imagen}
+                alt={`Foto del cerro ${cerro.nombre}`}
+                onError={() => setImagenFallo(true)}
+                sx={{ height: 200, objectFit: 'cover' }}
+              />
+            )}
+
+        <CardContent sx={{ width: '100%' }}>
+          <Typography variant="h6" sx={{ color: 'primary.dark' }}>
+            {cerro.nombre}
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            {cerro.altura} m · {cerro.ubicacion}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+    </Card>
   )
 }
 

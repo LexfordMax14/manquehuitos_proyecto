@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { ComentarioType } from "../types/comentario";
-const baseUrl = "http://localhost:3001/notes";
+const baseUrl = "http://localhost:5174/notes";
 
 const getAll = () => {
   const request = axios.get(baseUrl);
