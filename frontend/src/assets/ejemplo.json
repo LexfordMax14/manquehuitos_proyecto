@@ -1,0 +1,51 @@
+[
+  {
+    "id": 1,
+    "nombre": "Cerro El Manquehuito",
+    "descripcion": "Sendero con buenas vistas de Santiago y un recorrido de dificultad moderada.",
+    "altura": 1635,
+    "dificultad": "Intermedio",
+    "descansos": 3,
+    "banos": true,
+    "imagenes": [
+      "https://example.com/manquehuito-1.jpg",
+      "https://example.com/manquehuito-2.jpg"
+    ],
+    "ubicacion": "Lo Barnechea, Santiago",
+    "createdAt": "2026-09-01T10:30:00Z",
+    "updatedAt": "2026-09-15T16:45:00Z"
+  },
+  {
+    "id": 2,
+    "nombre": "Cerro La Cruz",
+    "descripcion": "Ruta corta pero exigente, ideal para practicar trekking durante el fin de semana.",
+    "altura": 1450,
+    "dificultad": "Avanzado",
+    "descansos": 1,
+    "banos": false,
+    "imagenes": [
+      "https://example.com/cruz-1.jpg",
+      "https://example.com/cruz-2.jpg",
+      "https://example.com/cruz-3.jpg"
+    ],
+    "ubicacion": "Las Condes, Santiago",
+    "createdAt": "2026-08-20T14:15:00Z",
+    "updatedAt": "2026-09-10T09:20:00Z"
+  },
+  {
+    "id": 3,
+    "nombre": "Cerro Verde",
+    "descripcion": "Recorrido sencillo y familiar con senderos amplios y varios puntos de descanso.",
+    "altura": 920,
+    "dificultad": "Principiante",
+    "descansos": 5,
+    "banos": true,
+    "imagenes": [
+      "https://example.com/verde-1.jpg",
+      "https://example.com/verde-2.jpg"
+    ],
+    "ubicacion": "Providencia, Santiago",
+    "createdAt": "2026-07-12T11:00:00Z",
+    "updatedAt": "2026-09-05T18:10:00Z"
+  }
+]
