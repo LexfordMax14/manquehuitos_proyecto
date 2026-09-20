@@ -4,6 +4,7 @@ import type { DetalleCerro } from '../types/detalleCerro'
 import cerros from '../services/cerros'
 import serviceComentario from '../services/comentarios'
 import type { ComentarioType } from '../types/comentario'
+import Comentario from "../components/Comentario";
 
 const Cerro = () => {
   const { id } = useParams()
@@ -115,7 +116,7 @@ const Cerro = () => {
           {mostrados.map((comentario) => (
             <Comentario
               key={comentario.id}
-              note={comentario}
+              comentario={comentario}
             />
           ))}
         </ul>
