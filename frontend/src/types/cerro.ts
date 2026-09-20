@@ -1,8 +1,17 @@
+// Modelo de un cerro. Por ahora solo con lo mínimo que necesita la tarjeta.
+
 export interface Cerro {
-  nombre: string;
-  altura: number;
-  dificultad: 'Baja' | 'Media' | 'Alta' | 'Experto';
-  descripcion: string;
-  ubicacion: string;
-  imagenes: File[];
+  id: number
+  nombre: string
+  imagen: string
+  altura: number
+  dificultad?: string
+  descansos?: string[]
+  banos?: string[]
+  descripcion: string
+  imagenes: string[]
+  titulo?: string
+  galeria?: string[]
+  ubicacion: string
+  comentarios: string[]
 }
