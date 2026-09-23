@@ -20,11 +20,11 @@ function Header() {
         </Typography>
 
         <Button component={Link} to="/" sx={{ color: 'inherit' }}>
-          Cerros
+          Iniciar sesión
         </Button>
 
         <Tooltip title="Mi perfil">
-          <IconButton component={Link} to="/perfil" aria-label="Mi perfil" sx={{ color: 'inherit' }}>
+          <IconButton component={Link} to="/" aria-label="Mi perfil" sx={{ color: 'inherit' }}>
             <AccountCircle />
           </IconButton>
         </Tooltip>

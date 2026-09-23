@@ -12,8 +12,6 @@ import {
 import { CloudUpload } from '@mui/icons-material';
 import type { Cerro } from '../types/cerro';
 
-// Lo que el usuario llena en el formulario: el id y los comentarios no van,
-// porque los genera el backend. Las imágenes son archivos, no URLs todavía.
 type NuevoCerro = Pick<Cerro, 'nombre' | 'altura' | 'dificultad' | 'descripcion' | 'ubicacion'> & {
   imagenes: FileList | null;
 };
