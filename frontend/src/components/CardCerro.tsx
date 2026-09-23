@@ -4,13 +4,10 @@ import type { Cerro } from '../types/cerro'
 
 interface CardCerroProps {
   cerro: Cerro
-  // Qué hacer al clickear la tarjeta. La navegación la resuelve quien use
-  // este componente.
   onSelect: () => void
 }
 
 function CardCerro({ cerro, onSelect }: CardCerroProps) {
-  // Estado local: si la imagen no carga, mostramos un texto de reemplazo.
   const [imagenFallo, setImagenFallo] = useState(false)
 
   return (
@@ -37,9 +34,9 @@ function CardCerro({ cerro, onSelect }: CardCerroProps) {
           : (
               <CardMedia
                 component="img"
-                image={cerro.imagen}
+                image={cerro.imagenes[0]}
                 alt={`Foto del cerro ${cerro.nombre}`}
-                onError={() => setImagenFallo(true)}
+                
                 sx={{ height: 200, objectFit: 'cover' }}
               />
             )}

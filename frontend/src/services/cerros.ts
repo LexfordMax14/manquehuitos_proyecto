@@ -1,17 +1,16 @@
-import cerros from "../assets/ejemplo.json";
-import type { DetalleCerro } from '../types/detalleCerro'
+import cerros from "../data/cerros.json";
+import type { Cerro } from '../types/cerro'
 
 
-const getCerro = (id: number): DetalleCerro => {
+const getCerro = (id: number): Cerro => {
   const cerro = cerros.find(cerro => cerro.id === id);
 
     if (!cerro) {
         throw new Error("Cerro no encontrado");
     }
 
-    return cerro as DetalleCerro;
+    return cerro as Cerro;
 }
-
 
 export default {
   getCerro

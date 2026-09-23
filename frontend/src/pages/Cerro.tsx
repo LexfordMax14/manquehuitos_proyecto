@@ -11,15 +11,15 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import type { DetalleCerro } from '../types/detalleCerro'
+import type { Cerro } from '../types/cerro'
 import cerros from '../services/cerros'
 import type { ComentarioType } from '../types/comentario'
 import Comentario from '../components/Comentario'
 
-const Cerro = () => {
+const DetalleCerro = () => {
   const { id } = useParams()
   const cerroId = Number(id)
-  const [cerro, setCerro] = useState<DetalleCerro | null>(null)
+  const [cerro, setCerro] = useState<Cerro | null>(null)
 
   const [mostrarCaja, setCaja] = useState<boolean>(false)
   const [nuevoAutor, setNuevoAutor] = useState<string>('')
@@ -150,4 +150,4 @@ const Cerro = () => {
   )
 }
 
-export default Cerro
+export default DetalleCerro

@@ -1,17 +1,13 @@
-// Modelo de un cerro. Por ahora solo con lo mínimo que necesita la tarjeta.
-
 export interface Cerro {
   id: number
   nombre: string
-  imagen: string
-  altura: number
-  dificultad?: string
-  descansos?: string[]
-  banos?: string[]
   descripcion: string
+  altura: number
+  dificultad?: "Baja" | "Media" | "Alta" | "Experto"
+  descansos?: number
+  banos?: boolean  
   imagenes: string[]
-  titulo?: string
-  galeria?: string[]
   ubicacion: string
-  comentarios: string[]
+  createdAt: string
+  updatedAt: string
 }
