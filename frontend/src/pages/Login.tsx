@@ -40,7 +40,7 @@ const Login = () => {
 
           <TextField
             label="Usuario"
-            sx={estiloCampo}
+            sx={{ ...estiloCampo, mb: 1.5 }}
             required
             autoComplete="username"
             value={usuario}
@@ -85,19 +85,23 @@ const Login = () => {
                 },
               }}
             />
+
+            {/* Solo visual por ahora: no hace nada al presionarlo. */}
+            <Button
+              type="button"
+              size="small"
+              sx={{ alignSelf: 'flex-end', textTransform: 'none', color: 'primary.light', py: 0, mt: 0.5 }}
+            >
+              ¿Olvidaste tu contraseña?
+            </Button>
           </Stack>
 
           <Button type="submit" variant="contained" size="large">
             Ingresar
           </Button>
 
-          {/* Solo visual por ahora: no hace nada al presionarlo. */}
-          <Button
-            type="button"
-            size="small"
-            sx={{ alignSelf: 'center', textTransform: 'none', color: 'primary.light' }}
-          >
-            ¿Olvidaste tu contraseña?
+          <Button type="button" variant="outlined" onClick={() => navigate('/registro')}>
+            Registrarse
           </Button>
         </Stack>
       </Paper>
