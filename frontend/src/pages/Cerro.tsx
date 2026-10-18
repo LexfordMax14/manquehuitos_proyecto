@@ -13,6 +13,7 @@ import {
 } from '@mui/material'
 import type { Cerro } from '../types/cerro'
 import cerros from '../services/cerros'
+import comentarios from '../services/comentarios'
 import type { ComentarioType } from '../types/comentario'
 import Comentario from '../components/Comentario'
 
@@ -20,7 +21,7 @@ const DetalleCerro = () => {
   const { id } = useParams()
   const [cerro, setCerro] = useState<Cerro | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const cerroId = Number(id)
+  const [comentariosError, setComentariosError] = useState<string | null>(null)
 
   const [mostrarCaja, setCaja] = useState<boolean>(false)
   const [nuevoAutor, setNuevoAutor] = useState<string>('')
@@ -37,16 +38,16 @@ const DetalleCerro = () => {
 
   const addComentario = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const nuevo: ComentarioType = {
-      id: Date.now(),
-      cerro: cerroId,
-      contenido: nuevoComentario,
-      autor: nuevoAutor,
-    }
+    if (!id) return
 
-    setComentarios(cajaComentarios.concat(nuevo))
-    setNuevoAutor('')
-    setNuevoComentario('')
+    comentarios
+      .create({ contenido: nuevoComentario, autor: nuevoAutor }, id)
+      .then(nuevo => {
+        setComentarios(comentariosActuales => comentariosActuales.concat(nuevo))
+        setNuevoAutor('')
+        setNuevoComentario('')
+      })
+      .catch(() => setComentariosError('No se pudo publicar el comentario.'))
   }
 
   const mostrados = mostrarCaja ? cajaComentarios : []
@@ -57,6 +58,11 @@ const DetalleCerro = () => {
         .getCerro(id)
         .then(setCerro)
         .catch(() => setError('No se pudo cargar el cerro.'))
+
+      comentarios
+        .getByCerro(id)
+        .then(setComentarios)
+        .catch(() => setComentariosError('No se pudieron cargar los comentarios.'))
     }
   }, [id])
 
@@ -123,6 +129,12 @@ const DetalleCerro = () => {
             {mostrarCaja ? 'Ocultar' : 'Mostrar'}
           </Button>
         </Stack>
+
+        {comentariosError && (
+          <Typography sx={{ color: 'error.main', mb: 2 }}>
+            {comentariosError}
+          </Typography>
+        )}
 
         <Stack component="form" onSubmit={addComentario} sx={{ gap: 2, mb: 3 }}>
           <TextField

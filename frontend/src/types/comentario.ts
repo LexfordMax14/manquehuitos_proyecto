@@ -1,6 +1,6 @@
 export interface ComentarioType {
-  id: number
-  cerro: number
+  id: string
+  cerro: string
   contenido: string
   autor: string | null
   // padre: number | null // null si no responde a nadie o el id del respondido
