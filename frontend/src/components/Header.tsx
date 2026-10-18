@@ -19,7 +19,7 @@ function Header() {
           Manquehuapp
         </Typography>
 
-        <Button component={Link} to="/" sx={{ color: 'inherit' }}>
+        <Button component={Link} to="/login" sx={{ color: 'inherit' }}>
           Iniciar sesión
         </Button>
 
