@@ -20,7 +20,7 @@ Se integró el core de `leaflet` mediante un componente React controlado con `us
 ## 3. Modelo de Datos y Tipos TypeScript
 
 - Interfaz `RutaCerro` (`src/types/cerro.ts`)
-- Datos (`src/data/cerros.json`) (se encuentran harcodeados de momento)
+- Datos: MongoDB, base local `manquehuapp`. El frontend consulta los GET de cerros. El archivo JSON de carga fue retirado tras verificar la importación.
 - `MapaRutaModal.tsx` (`src/components/MapaRutaModal.tsx`)
 Componente responsable de la capa superpuesta y de la lógica cartográfica:
 - **Props recibidas:**
@@ -57,10 +57,16 @@ Vista individual del cerro:
 
 ---
 
-## 6. Próximos Pasos (Integración con Backend)
+## 6. Integración con MongoDB
 
-Cuando el proyecto avance hacia la persistencia en servidor (según las cátedras c06 a c08):
-1. **Modelo en Mongoose / Backend:** Añadir el esquema anidado de `rutas` en el modelo `Cerro`.
-2. **Controlador:** Asegurar que el endpoint `GET /api/cerros/:id` devuelva el array `rutas`.
-3. **Servicio Frontend:** `src/services/cerros.ts` consumirá `axios` hacia la API en lugar de `cerros.json`, manteniendo la interfaz `RutaCerro` intacta sin requerir cambios en los componentes visuales.
+El modelo `backend/src/models/cerros.ts` guarda `rutas` como subdocumentos del cerro, sin `_id` adicional. Cada ruta conserva su ID numérico, nombre, distancia, duración, dificultad y coordenadas `[latitud, longitud]`, como las espera Leaflet. El esquema contiene solamente los campos y sus tipos, sin validaciones adicionales de rutas.
 
+El directorio y el detalle consultan `GET /api/cerros` y `GET /api/cerros/:idcerro`. El ID del cerro es ahora el ObjectId de MongoDB serializado como texto. Se añadieron estados de carga, error, lista vacía y cerro no encontrado. `MapaRutaModal.tsx` se conserva sin cambios. No se modificaron los POST/PUT.
+
+### Carga realizada
+
+El 18-10-2026 se cargaron los datos en MongoDB local, base `manquehuapp`.
+Se verificaron 6 cerros y 18 rutas. La segunda ejecución creó 0 cerros y la comprobación final encontró 0 cerros duplicados y 0 rutas repetidas dentro de cada cerro.
+Después de verificar la persistencia se eliminaron el script, su servicio auxiliar y el JSON temporal de carga. No hay importaciones automáticas al arrancar ni código de carga pendiente de ejecutar.
+
+El mapa de Vicho permanece sin modificaciones. Por el alcance acordado, se retiraron los tests, fixtures y herramientas de prueba agregados para rutas. Las pruebas preexistentes de autenticacion se conservan.

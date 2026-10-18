@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
+  Alert,
   Box,
   Button,
   Chip,
@@ -20,7 +21,8 @@ import MapaRutaModal from '../components/MapaRutaModal'
 
 const DetalleCerro = () => {
   const { id } = useParams()
-  const cerroId = Number(id)
+  const cerroId = id ?? ''
+  const [status, setStatus] = useState('loading')
   const [cerro, setCerro] = useState<Cerro | null>(null)
   const [rutaActiva, setRutaActiva] = useState<RutaCerro | null>(null)
 
@@ -54,13 +56,18 @@ const DetalleCerro = () => {
   const mostrados = mostrarCaja ? cajaComentarios : []
 
   useEffect(() => {
-    if (cerroId) {
-      setCerro(cerros.getCerro(cerroId))
-    }
+    const controller = new AbortController()
+    cerros.getCerro(cerroId, controller.signal).then(data => {
+      setCerro(data); setRutaActiva(null); setStatus('ready')
+    }).catch(error => {
+      if (!controller.signal.aborted) setStatus(error.response?.status === 404 ? 'missing' : 'error')
+    })
+    return () => controller.abort()
   }, [cerroId])
 
-  if (!id) return null
-  if (!cerro) return <Typography sx={{ p: 4 }}>Cargando...</Typography>
+  if (status === 'missing') return <Alert severity="info">Cerro no encontrado.</Alert>
+  if (status === 'error') return <Alert severity="error">No se pudo cargar el cerro. Intenta recargar.</Alert>
+  if (!cerro || cerro.id !== cerroId) return <Typography sx={{ p: 4 }}>Cargando...</Typography>
 
   const rutasCerro = cerro.rutas ?? []
 

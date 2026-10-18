@@ -1,6 +1,28 @@
 import mongoose from "mongoose";
 
+export interface RutaCerroData {
+  id: number
+  nombre: string
+  distanciaKm: number
+  duracion: string
+  dificultad: "Baja" | "Media" | "Alta" | "Experto"
+  coordenadas: [number, number][]
+}
+
+const rutaSchema = new mongoose.Schema<RutaCerroData>(
+  {
+    id: { type: Number },
+    nombre: { type: String },
+    distanciaKm: { type: Number },
+    duracion: { type: String },
+    dificultad: { type: String },
+    coordenadas: { type: [[Number]] },
+  },
+  { _id: false }
+);
+
 export interface CerroData {
+  rutas: RutaCerroData[]
   nombre: string
   descripcion: string
   altura: number
@@ -21,6 +43,7 @@ function dificultadValida(v: string) {
 
 const postSchema = new mongoose.Schema<CerroData>(
   {
+    rutas: { type: [rutaSchema], default: [] },
     nombre: { type: String, required: true },
     descripcion: { type: String },
     altura: { type: Number, required: true },

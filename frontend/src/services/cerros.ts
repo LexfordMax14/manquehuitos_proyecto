@@ -1,17 +1,7 @@
-import cerros from "../data/cerros.json";
+import axios from 'axios'
 import type { Cerro } from '../types/cerro'
-
-
-const getCerro = (id: number): Cerro => {
-  const cerro = cerros.find(cerro => cerro.id === id);
-
-    if (!cerro) {
-        throw new Error("Cerro no encontrado");
-    }
-
-    return cerro as Cerro;
-}
-
-export default {
-  getCerro
-}
+const getAll = async (signal?: AbortSignal): Promise<Cerro[]> =>
+  (await axios.get<Cerro[]>('/api/cerros', { signal })).data
+const getCerro = async (id: string, signal?: AbortSignal): Promise<Cerro> =>
+  (await axios.get<Cerro>(`/api/cerros/${encodeURIComponent(id)}`, { signal })).data
+export default { getAll, getCerro }
