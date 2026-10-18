@@ -28,13 +28,16 @@ router.get("/:idcerro", async (request, response) => {
 // publicar un nuevo cerro
 router.post("/", async (request, response) => {
   const { nombre, 
+    descripcion,
     altura, 
     dificultad, 
+    descansos,
+    banos,
     ubicacion, 
     imagenes } = request.body;
 
   const cerro = new CerrosModel({
-    nombre, altura, dificultad, ubicacion, imagenes
+    nombre, descripcion, altura, dificultad, descansos, banos, ubicacion, imagenes
   });
 
   const cerroGuardado = await cerro.save();
@@ -45,14 +48,18 @@ router.post("/", async (request, response) => {
 // editar cerro
 router.put("/:idcerro", async (request, response) => {
   const cerro_id = request.params.idcerro
-  const { altura, 
+  const { nombre,
+    descripcion,
+    altura, 
     dificultad, 
+    descansos,
+    banos,
     ubicacion, 
     imagenes } = request.body;
 
   const cerroActualizado = await CerrosModel.findOneAndUpdate(
     { _id: cerro_id},
-    { altura, dificultad, ubicacion, imagenes},
+    { nombre, descripcion, altura, dificultad, descansos, banos, ubicacion, imagenes},
     { new: true, runValidators: true }
   );
 
@@ -75,7 +82,8 @@ router.delete("/:idcerro", async (request, response) => {
   if (!cerro) {
     response.status(404).json({
       error: "Cerro no encontrado",
-    })
+    });
+    return;
   }
 
   response.status(204).end();
