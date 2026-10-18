@@ -1,12 +1,12 @@
 import express from "express";
 import mongoose from "mongoose";
 // import cookieParser from "cookie-parser";
-import config from "./utils/config";
-import logger from "./utils/logger";
+import config from "./utils/config.ts";
+import logger from "./utils/logger.ts";
 // import middleware from "./utils/middleware";
-import cerrosRouter from "./controllers/cerros";
-import comentariosRouter from "./controllers/comentarios";
-import usuariosRouter from "./controllers/usuarios";
+import cerrosRouter from "./controllers/cerros.ts";
+import comentariosRouter from "./controllers/comentarios.ts";
+import usuariosRouter from "./controllers/usuarios.ts";
 // import loginRouter from "./controllers/login";
 
 const app = express();

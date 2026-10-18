@@ -1,5 +1,5 @@
 import express from "express";
-import CerrosModel from "../models/cerros"
+import CerrosModel from "../models/cerros.ts"
 
 const router = express.Router();
 
@@ -8,6 +8,20 @@ const router = express.Router();
 router.get("/", async (request, response) => {
   const cerros = await CerrosModel.find({});
   response.json(cerros);
+});
+
+// GET por id
+router.get("/:idcerro", async (request, response) => {
+  const cerro = await CerrosModel.findById(request.params.idcerro);
+
+  if (!cerro) {
+    response.status(404).json({
+      error: "Cerro no encontrado",
+    });
+    return;
+  }
+
+  response.json(cerro);
 });
 
 // POST

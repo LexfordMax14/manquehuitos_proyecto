@@ -1,6 +1,6 @@
 import express from "express";
-import ComentariosModel from "../models/comentarios";
-import Usuario from "../models/usuarios";
+import ComentariosModel from "../models/comentarios.ts";
+import Usuario from "../models/usuarios.ts";
 // import { withUsuarioOpcional } from "../utils/middleware";
 
 const router = express.Router();
