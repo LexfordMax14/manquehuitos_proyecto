@@ -1,6 +1,8 @@
 import express from "express";
 import CerrosModel from "../models/cerros"
 
+import { withUser } from "../utils/auth";
+
 const router = express.Router();
 
 // GET
@@ -10,9 +12,15 @@ router.get("/", async (request, response) => {
   response.json(cerros);
 });
 
+router.get("/:idcerro", async (request, response) => {
+  const cerro = await CerrosModel.findById(request.params.idcerro);
+  if (!cerro) { response.sendStatus(404); return; }
+  response.json(cerro);
+});
+
 // POST
 // publicar un nuevo cerro
-router.post("/", async (request, response) => {
+router.post("/", withUser, async (request, response) => {
   const { nombre, 
     altura, 
     dificultad, 
@@ -29,7 +37,7 @@ router.post("/", async (request, response) => {
 
 // PUT
 // editar cerro
-router.put("/:idcerro", async (request, response) => {
+router.put("/:idcerro", withUser, async (request, response) => {
   const cerro_id = request.params.idcerro
   const { altura, 
     dificultad, 
@@ -51,7 +59,7 @@ router.put("/:idcerro", async (request, response) => {
 
 // DELETE
 // eliminar cerro
-router.delete("/:idcerro", async (request, response) => {
+router.delete("/:idcerro", withUser, async (request, response) => {
   const cerro_id = request.params.idcerro
 
   const cerro = await CerrosModel.findOneAndDelete({
@@ -61,7 +69,8 @@ router.delete("/:idcerro", async (request, response) => {
   if (!cerro) {
     response.status(404).json({
       error: "Cerro no encontrado",
-    })
+    });
+    return;
   }
 
   response.status(204).end();

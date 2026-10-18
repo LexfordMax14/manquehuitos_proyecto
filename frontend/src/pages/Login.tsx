@@ -1,6 +1,9 @@
+import { useAuth } from '../auth/AuthContext'
+import { errorMessage } from '../services/auth'
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
+  Alert,
   Button,
   Container,
   InputAdornment,
@@ -18,22 +21,31 @@ const estiloCampo = {
 
 const Login = () => {
   const navigate = useNavigate();
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  const { signIn } = useAuth();
+  const location = useLocation();
 
   const [usuario, setUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [mostrar, setMostrar] = useState(false);
 
-  // Por ahora solo frontend: no se validan credenciales
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login:', { usuario, contrasena });
-    navigate('/');
+    setError('');
+    setBusy(true);
+    try {
+      await signIn(usuario, contrasena);
+      const from = location.state?.from;
+      navigate(typeof from === 'string' && from.startsWith('/') && !from.startsWith('//') ? from : '/', { replace: true });
+    } catch (failure) { setError(errorMessage(failure)); } finally { setBusy(false); }
   };
 
   return (
     <Container maxWidth="xs" sx={{ py: 6 }}>
       <Paper component="form" onSubmit={handleSubmit} sx={{ p: 4 }}>
         <Stack sx={{ gap: 2 }}>
+          {error && <Alert severity="error">{error}</Alert>}
           <Typography variant="h5" sx={{ color: 'primary.dark', textAlign: 'center' }}>
             Manquehuapp
           </Typography>
@@ -96,7 +108,7 @@ const Login = () => {
             </Button>
           </Stack>
 
-          <Button type="submit" variant="contained" size="large">
+          <Button type="submit" disabled={busy} variant="contained" size="large">
             Ingresar
           </Button>
 
