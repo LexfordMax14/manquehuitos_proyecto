@@ -15,7 +15,19 @@ const create = (data: Pick<ComentarioType, 'contenido' | 'autor'>, cerroId: stri
     .then(response => response.data)
 }
 
+const update = (cerroId: string, id: string, contenido: string) => {
+  return axios
+    .put<ComentarioType>(`${comentariosUrl}/${cerroId}/${id}`, { contenido })
+    .then(response => response.data)
+}
+
+const remove = (cerroId: string, id: string) => {
+  return axios.delete(`${comentariosUrl}/${cerroId}/${id}`)
+}
+
 export default {
   getByCerro,
   create,
+  update,
+  remove,
 }

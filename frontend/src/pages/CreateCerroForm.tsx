@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { CloudUpload } from '@mui/icons-material';
 import type { Cerro } from '../types/cerro';
+import cerros from '../services/cerros';
 
 type NuevoCerro = Pick<Cerro, 'nombre' | 'altura' | 'dificultad' | 'descripcion' | 'ubicacion'> & {
   imagenes: FileList | null;
@@ -30,11 +31,31 @@ const CreateCerroForm = () => {
     imagenes: null,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [error, setError] = useState<string | null>(null);
+  const [guardando, setGuardando] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Cerro creado:', cerro);
-    alert('Cerro creado. Revisa la consola para ver los datos.');
-    navigate('/');
+    setError(null);
+    setGuardando(true);
+
+    try {
+      await cerros.create({
+        nombre: cerro.nombre,
+        descripcion: cerro.descripcion,
+        altura: cerro.altura,
+        dificultad: cerro.dificultad,
+        ubicacion: cerro.ubicacion,
+        imagenes: cerro.imagenes
+          ? Array.from(cerro.imagenes).map(imagen => imagen.name)
+          : [],
+      });
+      navigate('/');
+    } catch {
+      setError('No se pudo crear el cerro.');
+    } finally {
+      setGuardando(false);
+    }
   };
 
   return (
@@ -107,9 +128,10 @@ const CreateCerroForm = () => {
               Cancelar
             </Button>
             <Button type="submit" variant="contained">
-              Crear
+              {guardando ? 'Guardando...' : 'Crear'}
             </Button>
           </Stack>
+          {error && <Typography sx={{ color: 'error.main' }}>{error}</Typography>}
         </Stack>
       </Paper>
     </Container>

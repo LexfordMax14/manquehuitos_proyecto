@@ -31,7 +31,24 @@ const getCerro = (id: string) => {
   return axios.get<Cerro>(`${cerrosUrl}/${id}`).then(response => response.data)
 }
 
+type CerroData = Omit<Cerro, 'id' | 'createdAt' | 'updatedAt'>
+
+const create = (data: CerroData) => {
+  return axios.post<Cerro>(cerrosUrl, data).then(response => response.data)
+}
+
+const update = (id: string, data: Partial<CerroData>) => {
+  return axios.put<Cerro>(`${cerrosUrl}/${id}`, data).then(response => response.data)
+}
+
+const remove = (id: string) => {
+  return axios.delete(`${cerrosUrl}/${id}`)
+}
+
 export default {
   getAll,
-  getCerro
+  getCerro,
+  create,
+  update,
+  remove,
 }
