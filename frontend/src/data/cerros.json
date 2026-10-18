@@ -12,6 +12,54 @@
       "images/san_cristobal_2.jpg"
     ],
     "ubicacion": "Región Metropolitana, Santiago",
+    "rutas": [
+      {
+        "id": 101,
+        "nombre": "Ruta #1 · Acceso Pío Nono (Sendero Clásico)",
+        "distanciaKm": 2.4,
+        "duracion": "45 min",
+        "dificultad": "Baja",
+        "coordenadas": [
+          [-33.4326, -70.6348],
+          [-33.4308, -70.6345],
+          [-33.4290, -70.6336],
+          [-33.4274, -70.6328],
+          [-33.4263, -70.6330],
+          [-33.4253, -70.6333]
+        ]
+      },
+      {
+        "id": 102,
+        "nombre": "Ruta #2 · Acceso Pedro de Valdivia Norte (Zorro Vidal)",
+        "distanciaKm": 3.1,
+        "duracion": "1h 00m",
+        "dificultad": "Baja",
+        "coordenadas": [
+          [-33.4212, -70.6175],
+          [-33.4218, -70.6215],
+          [-33.4227, -70.6258],
+          [-33.4235, -70.6292],
+          [-33.4244, -70.6315],
+          [-33.4253, -70.6333]
+        ]
+      },
+      {
+        "id": 103,
+        "nombre": "Ruta #3 · Sendero La Pirámide - Tupahue",
+        "distanciaKm": 4.2,
+        "duracion": "1h 25m",
+        "dificultad": "Media",
+        "coordenadas": [
+          [-33.4150, -70.6255],
+          [-33.4175, -70.6262],
+          [-33.4202, -70.6260],
+          [-33.4227, -70.6258],
+          [-33.4235, -70.6292],
+          [-33.4244, -70.6315],
+          [-33.4253, -70.6333]
+        ]
+      }
+    ],
     "createdAt": "2025-01-10T09:00:00.000Z",
     "updatedAt": "2025-01-10T09:00:00.000Z"
   },
@@ -28,6 +76,53 @@
       "images/manquehue_2.jpg"
     ],
     "ubicacion": "Región Metropolitana, Vitacura/Lo Barnechea",
+    "rutas": [
+      {
+        "id": 201,
+        "nombre": "Ruta #1 · Vía Roja (Santa María de Manquehue)",
+        "distanciaKm": 2.8,
+        "duracion": "1h 45m",
+        "dificultad": "Alta",
+        "coordenadas": [
+          [-33.3608, -70.5842],
+          [-33.3585, -70.5845],
+          [-33.3560, -70.5840],
+          [-33.3532, -70.5835],
+          [-33.3518, -70.5822],
+          [-33.3506, -70.5808]
+        ]
+      },
+      {
+        "id": 202,
+        "nombre": "Ruta #2 · Sendero Los Trapenses (Cara Norte)",
+        "distanciaKm": 3.5,
+        "duracion": "2h 00m",
+        "dificultad": "Alta",
+        "coordenadas": [
+          [-33.3442, -70.5735],
+          [-33.3458, -70.5752],
+          [-33.3474, -70.5768],
+          [-33.3488, -70.5782],
+          [-33.3497, -70.5795],
+          [-33.3506, -70.5808]
+        ]
+      },
+      {
+        "id": 203,
+        "nombre": "Ruta #3 · Travesía desde Portezuelo Manquehuito",
+        "distanciaKm": 3.2,
+        "duracion": "1h 50m",
+        "dificultad": "Media",
+        "coordenadas": [
+          [-33.3545, -70.5912],
+          [-33.3542, -70.5885],
+          [-33.3538, -70.5860],
+          [-33.3532, -70.5835],
+          [-33.3518, -70.5822],
+          [-33.3506, -70.5808]
+        ]
+      }
+    ],
     "createdAt": "2025-01-10T09:05:00.000Z",
     "updatedAt": "2025-01-10T09:05:00.000Z"
   },
@@ -45,6 +140,52 @@
       "images/manquehuito_3.jpg"
     ],
     "ubicacion": "Región Metropolitana, Vitacura/Lo Barnechea",
+    "rutas": [
+      {
+        "id": 301,
+        "nombre": "Ruta #1 · Sendero Clásico Vía Roja",
+        "distanciaKm": 2.1,
+        "duracion": "55 min",
+        "dificultad": "Baja",
+        "coordenadas": [
+          [-33.3608, -70.5842],
+          [-33.3580, -70.5865],
+          [-33.3558, -70.5890],
+          [-33.3545, -70.5912],
+          [-33.3542, -70.5928],
+          [-33.3540, -70.5945]
+        ]
+      },
+      {
+        "id": 302,
+        "nombre": "Ruta #2 · Acceso El Cóndor (Vitacura)",
+        "distanciaKm": 2.5,
+        "duracion": "1h 10m",
+        "dificultad": "Media",
+        "coordenadas": [
+          [-33.3615, -70.5960],
+          [-33.3595, -70.5955],
+          [-33.3578, -70.5952],
+          [-33.3562, -70.5948],
+          [-33.3540, -70.5945]
+        ]
+      },
+      {
+        "id": 303,
+        "nombre": "Ruta #3 · Acceso Norte La Dehesa",
+        "distanciaKm": 2.3,
+        "duracion": "1h 05m",
+        "dificultad": "Media",
+        "coordenadas": [
+          [-33.3485, -70.5920],
+          [-33.3508, -70.5918],
+          [-33.3528, -70.5915],
+          [-33.3545, -70.5912],
+          [-33.3542, -70.5928],
+          [-33.3540, -70.5945]
+        ]
+      }
+    ],
     "createdAt": "2025-01-10T09:30:00.000Z",  
     "updatedAt": "2025-01-10T09:30:00.000Z"
   },
@@ -60,6 +201,51 @@
       "images/provincia_1.jpg"
     ],
     "ubicacion": "Región Metropolitana, San José de Maipo",
+    "rutas": [
+      {
+        "id": 401,
+        "nombre": "Ruta #1 · Acceso Puente Ñilhue (Sendero Normal)",
+        "distanciaKm": 8.5,
+        "duracion": "5h 00m",
+        "dificultad": "Experto",
+        "coordenadas": [
+          [-33.3688, -70.4675],
+          [-33.3755, -70.4590],
+          [-33.3820, -70.4510],
+          [-33.3895, -70.4445],
+          [-33.3955, -70.4395],
+          [-33.4005, -70.4358]
+        ]
+      },
+      {
+        "id": 402,
+        "nombre": "Ruta #2 · San Carlos de Apoquindo - Alto del Naranjo",
+        "distanciaKm": 9.2,
+        "duracion": "5h 30m",
+        "dificultad": "Experto",
+        "coordenadas": [
+          [-33.4025, -70.4910],
+          [-33.3980, -70.4765],
+          [-33.3935, -70.4620],
+          [-33.3895, -70.4445],
+          [-33.3955, -70.4395],
+          [-33.4005, -70.4358]
+        ]
+      },
+      {
+        "id": 403,
+        "nombre": "Ruta #3 · Travesía Sur Vallecito",
+        "distanciaKm": 7.8,
+        "duracion": "4h 40m",
+        "dificultad": "Alta",
+        "coordenadas": [
+          [-33.4180, -70.4650],
+          [-33.4110, -70.4550],
+          [-33.4055, -70.4450],
+          [-33.4005, -70.4358]
+        ]
+      }
+    ],
     "createdAt": "2025-01-10T09:10:00.000Z",
     "updatedAt": "2025-01-10T09:10:00.000Z"
   },
@@ -76,6 +262,50 @@
       "images/la_campana_2.jpg"
     ],
     "ubicacion": "Región de Valparaíso, Parque Nacional La Campana",
+    "rutas": [
+      {
+        "id": 501,
+        "nombre": "Ruta #1 · Sendero El Andinista (Sector Granizo)",
+        "distanciaKm": 7.0,
+        "duracion": "4h 00m",
+        "dificultad": "Alta",
+        "coordenadas": [
+          [-32.9740, -71.1480],
+          [-32.9685, -71.1395],
+          [-32.9635, -71.1315],
+          [-32.9585, -71.1245],
+          [-32.9535, -71.1195]
+        ]
+      },
+      {
+        "id": 502,
+        "nombre": "Ruta #2 · Sendero Los Peumos - Portezuelo Ocoa",
+        "distanciaKm": 6.4,
+        "duracion": "3h 30m",
+        "dificultad": "Media",
+        "coordenadas": [
+          [-32.9360, -71.1350],
+          [-32.9435, -71.1310],
+          [-32.9510, -71.1280],
+          [-32.9585, -71.1245],
+          [-32.9535, -71.1195]
+        ]
+      },
+      {
+        "id": 503,
+        "nombre": "Ruta #3 · Ruta La Mina - Placa de Darwin",
+        "distanciaKm": 6.8,
+        "duracion": "3h 45m",
+        "dificultad": "Alta",
+        "coordenadas": [
+          [-32.9660, -71.1520],
+          [-32.9610, -71.1420],
+          [-32.9575, -71.1330],
+          [-32.9585, -71.1245],
+          [-32.9535, -71.1195]
+        ]
+      }
+    ],
     "createdAt": "2025-01-10T09:15:00.000Z",
     "updatedAt": "2025-01-10T09:15:00.000Z"
   },
@@ -92,6 +322,48 @@
       "images/cerro_castillo_2.jpg"
     ],
     "ubicacion": "Región de Aysén, Parque Nacional Cerro Castillo",
+    "rutas": [
+      {
+        "id": 601,
+        "nombre": "Ruta #1 · Sendero Laguna Cerro Castillo (Las Horquetas)",
+        "distanciaKm": 7.5,
+        "duracion": "4h 15m",
+        "dificultad": "Alta",
+        "coordenadas": [
+          [-46.1050, -72.1650],
+          [-46.0940, -72.1780],
+          [-46.0830, -72.1900],
+          [-46.0740, -72.1990],
+          [-46.0685, -72.2055]
+        ]
+      },
+      {
+        "id": 602,
+        "nombre": "Ruta #2 · Travesía Río Turbio - Paso Peñón",
+        "distanciaKm": 9.0,
+        "duracion": "5h 15m",
+        "dificultad": "Experto",
+        "coordenadas": [
+          [-46.0480, -72.2420],
+          [-46.0550, -72.2290],
+          [-46.0620, -72.2160],
+          [-46.0685, -72.2055]
+        ]
+      },
+      {
+        "id": 603,
+        "nombre": "Ruta #3 · Variante Campamento Neozelandés",
+        "distanciaKm": 6.2,
+        "duracion": "3h 30m",
+        "dificultad": "Alta",
+        "coordenadas": [
+          [-46.0880, -72.2350],
+          [-46.0810, -72.2220],
+          [-46.0740, -72.1990],
+          [-46.0685, -72.2055]
+        ]
+      }
+    ],
     "createdAt": "2025-01-10T09:25:00.000Z",
     "updatedAt": "2025-01-10T09:25:00.000Z"
   }

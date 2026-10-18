@@ -11,15 +11,18 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import type { Cerro } from '../types/cerro'
+import { Map as MapIcon } from '@mui/icons-material'
+import type { Cerro, RutaCerro } from '../types/cerro'
 import cerros from '../services/cerros'
 import type { ComentarioType } from '../types/comentario'
 import Comentario from '../components/Comentario'
+import MapaRutaModal from '../components/MapaRutaModal'
 
 const DetalleCerro = () => {
   const { id } = useParams()
   const cerroId = Number(id)
   const [cerro, setCerro] = useState<Cerro | null>(null)
+  const [rutaActiva, setRutaActiva] = useState<RutaCerro | null>(null)
 
   const [mostrarCaja, setCaja] = useState<boolean>(false)
   const [nuevoAutor, setNuevoAutor] = useState<string>('')
@@ -54,10 +57,12 @@ const DetalleCerro = () => {
     if (cerroId) {
       setCerro(cerros.getCerro(cerroId))
     }
-  }, [])
+  }, [cerroId])
 
   if (!id) return null
   if (!cerro) return <Typography sx={{ p: 4 }}>Cargando...</Typography>
+
+  const rutasCerro = cerro.rutas ?? []
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -91,6 +96,7 @@ const DetalleCerro = () => {
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
               gap: 1.5,
+              mb: rutasCerro.length > 0 ? 3 : 0,
             }}
           >
             {cerro.imagenes.slice(1).map((imagen, index) => (
@@ -104,7 +110,70 @@ const DetalleCerro = () => {
             ))}
           </Box>
         )}
+
+        {rutasCerro.length > 0 && (
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="h6" sx={{ color: 'primary.dark', mb: 1.5 }}>
+              Rutas disponibles
+            </Typography>
+            <Stack sx={{ gap: 1.5 }}>
+              {rutasCerro.map(ruta => (
+                <Paper
+                  key={ruta.id}
+                  variant="outlined"
+                  onClick={() => setRutaActiva(ruta)}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    px: 2.5,
+                    py: 1.25,
+                    borderRadius: 999,
+                    borderWidth: 2,
+                    borderColor: 'primary.main',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.15s ease, transform 0.1s ease',
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                    },
+                  }}
+                >
+                  <Box sx={{ pr: 2 }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'text.primary' }}>
+                      {ruta.nombre}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                      {ruta.distanciaKm} km · {ruta.duracion} · Dificultad {ruta.dificultad}
+                    </Typography>
+                  </Box>
+
+                  <Button
+                    variant="contained"
+                    size="small"
+                    startIcon={<MapIcon />}
+                    onClick={e => {
+                      e.stopPropagation()
+                      setRutaActiva(ruta)
+                    }}
+                    sx={{ borderRadius: 999, px: 2, flexShrink: 0 }}
+                  >
+                    Ver
+                  </Button>
+                </Paper>
+              ))}
+            </Stack>
+          </Box>
+        )}
       </Paper>
+
+      <MapaRutaModal
+        open={rutaActiva !== null}
+        nombreCerro={cerro.nombre}
+        rutas={rutasCerro}
+        rutaActiva={rutaActiva}
+        onSelectRuta={setRutaActiva}
+        onClose={() => setRutaActiva(null)}
+      />
 
       <Paper sx={{ p: { xs: 2, sm: 3 } }}>
         <Stack

@@ -1,3 +1,12 @@
+export interface RutaCerro {
+  id: number
+  nombre: string
+  distanciaKm: number
+  duracion: string
+  dificultad: "Baja" | "Media" | "Alta" | "Experto"
+  coordenadas: [number, number][]
+}
+
 export interface Cerro {
   id: number
   nombre: string
@@ -8,6 +17,8 @@ export interface Cerro {
   banos?: boolean  
   imagenes: string[]
   ubicacion: string
+  rutas?: RutaCerro[]
   createdAt: string
   updatedAt: string
 }
+
