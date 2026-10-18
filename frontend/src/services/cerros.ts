@@ -1,17 +1,37 @@
-import cerros from "../data/cerros.json";
+import axios from 'axios'
 import type { Cerro } from '../types/cerro'
 
+const cerrosUrl = '/api/cerros'
 
-const getCerro = (id: number): Cerro => {
-  const cerro = cerros.find(cerro => cerro.id === id);
+const parseCerros = (data: unknown): Cerro[] => {
+  if (Array.isArray(data)) {
+    return data as Cerro[]
+  }
 
-    if (!cerro) {
-        throw new Error("Cerro no encontrado");
+  if (typeof data === 'object' && data !== null) {
+    const response = data as { cerros?: unknown; data?: unknown }
+
+    if (Array.isArray(response.cerros)) {
+      return response.cerros as Cerro[]
     }
 
-    return cerro as Cerro;
+    if (Array.isArray(response.data)) {
+      return response.data as Cerro[]
+    }
+  }
+
+  throw new Error('La API devolvió un formato inválido para los cerros')
+}
+
+const getAll = () => {
+  return axios.get<unknown>(cerrosUrl).then(response => parseCerros(response.data))
+}
+
+const getCerro = (id: string) => {
+  return axios.get<Cerro>(`${cerrosUrl}/${id}`).then(response => response.data)
 }
 
 export default {
+  getAll,
   getCerro
 }

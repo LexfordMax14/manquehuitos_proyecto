@@ -1,16 +1,25 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Box, Button, Container, Stack, Typography } from '@mui/material'
 import { Add } from '@mui/icons-material'
-import cerrosData from '../data/cerros.json'
 import BarraBusqueda from './BarraBusqueda'
 import ListaCerros from './ListaCerros'
 import type { Cerro } from '../types/cerro'
+import cerrosService from '../services/cerros'
 
 function DirectorioCerros() {
   const navigate = useNavigate()
   const [busqueda, setBusqueda] = useState('')
-  const cerros = cerrosData as Cerro[]
+  const [cerros, setCerros] = useState<Cerro[]>([])
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    cerrosService
+      .getAll()
+      .then(setCerros)
+      .catch(() => setError('No se pudieron cargar los cerros.'))
+  }, [])
+
   const cerrosFiltrados = cerros.filter(cerro =>
     cerro.nombre.toLocaleLowerCase().includes(busqueda.toLocaleLowerCase()),
   )
@@ -39,10 +48,16 @@ function DirectorioCerros() {
         <BarraBusqueda busqueda={busqueda} onBusquedaChange={setBusqueda} />
       </Box>
 
-      <ListaCerros
-        cerros={cerrosFiltrados}
-        onSelect={cerro => navigate(`/${cerro.id}`)}
-      />
+      {error ? (
+        <Typography sx={{ color: 'error.main', py: 4, textAlign: 'center' }}>
+          {error}
+        </Typography>
+      ) : (
+        <ListaCerros
+          cerros={cerrosFiltrados}
+          onSelect={cerro => navigate(`/${cerro.id}`)}
+        />
+      )}
     </Container>
   )
 }

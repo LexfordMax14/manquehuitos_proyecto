@@ -18,8 +18,9 @@ import Comentario from '../components/Comentario'
 
 const DetalleCerro = () => {
   const { id } = useParams()
-  const cerroId = Number(id)
   const [cerro, setCerro] = useState<Cerro | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const cerroId = Number(id)
 
   const [mostrarCaja, setCaja] = useState<boolean>(false)
   const [nuevoAutor, setNuevoAutor] = useState<string>('')
@@ -51,12 +52,16 @@ const DetalleCerro = () => {
   const mostrados = mostrarCaja ? cajaComentarios : []
 
   useEffect(() => {
-    if (cerroId) {
-      setCerro(cerros.getCerro(cerroId))
+    if (id) {
+      cerros
+        .getCerro(id)
+        .then(setCerro)
+        .catch(() => setError('No se pudo cargar el cerro.'))
     }
-  }, [])
+  }, [id])
 
   if (!id) return null
+  if (error) return <Typography sx={{ p: 4, color: 'error.main' }}>{error}</Typography>
   if (!cerro) return <Typography sx={{ p: 4 }}>Cargando...</Typography>
 
   return (

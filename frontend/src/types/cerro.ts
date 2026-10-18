@@ -1,5 +1,5 @@
 export interface Cerro {
-  id: number
+  id: string
   nombre: string
   descripcion: string
   altura: number
