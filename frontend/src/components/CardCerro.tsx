@@ -35,6 +35,7 @@ function CardCerro({ cerro, onSelect }: CardCerroProps) {
               <CardMedia
                 component="img"
                 image={cerro.imagenes[0]}
+                onError={() => setImagenFallo(true)}
                 alt={`Foto del cerro ${cerro.nombre}`}
                 
                 sx={{ height: 200, objectFit: 'cover' }}

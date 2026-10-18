@@ -1,6 +1,8 @@
+import { api, errorMessage } from '../services/auth'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
+  Alert,
   Button,
   Container,
   InputAdornment,
@@ -18,6 +20,8 @@ const estiloCampo = {
 
 const Registro = () => {
   const navigate = useNavigate();
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
 
   const [usuario, setUsuario] = useState('');
   const [correo, setCorreo] = useState('');
@@ -27,18 +31,22 @@ const Registro = () => {
 
   const noCoinciden = confirmar !== '' && confirmar !== contrasena;
 
-  // Por ahora solo frontend: no se guarda el usuario
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     if (noCoinciden) return;
-    console.log('Registro:', { usuario, correo, contrasena });
-    navigate('/');
+    setBusy(true);
+    try {
+      await api.post('/api/usuarios', { username: usuario, email: correo, password: contrasena });
+      navigate('/login', { state: { registered: true } });
+    } catch (failure) { setError(errorMessage(failure)); } finally { setBusy(false); }
   };
 
   return (
     <Container maxWidth="xs" sx={{ py: 6 }}>
       <Paper component="form" onSubmit={handleSubmit} sx={{ p: 4 }}>
         <Stack sx={{ gap: 2 }}>
+          {error && <Alert severity="error">{error}</Alert>}
           <Typography variant="h5" sx={{ color: 'primary.dark', textAlign: 'center' }}>
             Crear cuenta
           </Typography>
@@ -132,7 +140,7 @@ const Registro = () => {
             />
           </Stack>
 
-          <Button type="submit" variant="contained" size="large">
+          <Button type="submit" disabled={busy} variant="contained" size="large">
             Registrarse
           </Button>
 

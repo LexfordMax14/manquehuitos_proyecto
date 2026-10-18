@@ -1,0 +1,50 @@
+import re
+from pathlib import Path
+from playwright.sync_api import sync_playwright, expect
+
+output = Path(__file__).resolve().parents[1] / "docs" / "evidencia-auth"
+output.mkdir(parents=True, exist_ok=True)
+username = "lazaro_demo_" + str(__import__("time").time_ns())
+with sync_playwright() as p:
+    browser = p.chromium.launch(headless=True)
+    page = browser.new_page(viewport={"width": 1280, "height": 850})
+    failures = []
+    page.on("pageerror", lambda error: failures.append(str(error)))
+    page.goto("http://127.0.0.1:4317/form")
+    page.wait_for_load_state("networkidle")
+    expect(page).to_have_url("http://127.0.0.1:4317/login")
+    print(page.get_by_role("button").all_text_contents(), flush=True)
+    page.screenshot(path=str(output / "01-login-protegido.png"), full_page=True)
+    page.get_by_role("button", name="Registrarse", exact=True).click()
+    expect(page.get_by_role("heading", name="Crear cuenta")).to_be_visible()
+    page.get_by_label("Usuario").fill(username)
+    page.get_by_label("Correo").fill(username + "@example.test")
+    page.get_by_label(re.compile("^Contrase")).fill("secreto123")
+    page.get_by_label("Confirmar contraseña").fill("secreto123")
+    page.get_by_role("button", name="Registrarse", exact=True).click()
+    expect(page).to_have_url("http://127.0.0.1:4317/login")
+    page.get_by_label("Usuario").fill(username)
+    page.get_by_label(re.compile("^Contrase")).fill("incorrecta")
+    page.get_by_role("button", name="Ingresar", exact=True).click()
+    expect(page.get_by_role("alert")).to_contain_text("Usuario o contraseña incorrectos")
+    page.get_by_label(re.compile("^Contrase")).fill("secreto123")
+    page.get_by_role("button", name="Ingresar", exact=True).click()
+    expect(page.get_by_role("button", name="Cerrar sesión")).to_be_visible()
+    page.goto("http://127.0.0.1:4317/form")
+    expect(page.get_by_role("heading", name="Crear nuevo cerro")).to_be_visible()
+    page.reload()
+    expect(page.get_by_role("heading", name="Crear nuevo cerro")).to_be_visible()
+    assert "token=" not in page.evaluate("document.cookie")
+    assert page.evaluate("localStorage.getItem('csrfToken')")
+    page.screenshot(path=str(output / "02-sesion-restaurada.png"), full_page=True)
+    page.get_by_role("button", name="Cerrar sesión").click()
+    expect(page).to_have_url("http://127.0.0.1:4317/login")
+    assert page.evaluate("localStorage.getItem('csrfToken')") is None
+    page.evaluate("localStorage.setItem('sessionUser', JSON.stringify({ username: 'falso' }))")
+    page.goto("http://127.0.0.1:4317/form")
+    expect(page).to_have_url("http://127.0.0.1:4317/login")
+    page.set_viewport_size({"width": 390, "height": 844})
+    page.screenshot(path=str(output / "03-login-movil.png"), full_page=True)
+    assert not failures, failures
+    browser.close()
+    print("PASS: registro, error login, sesión, recarga, httpOnly, logout y localStorage falsificado")

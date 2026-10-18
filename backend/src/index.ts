@@ -1,12 +1,5 @@
-import express from "express";
- 
-const app = express();
- 
-app.get("/", (request, response) => {
-  response.send("<h1>Hello World!</h1>");
-});
- 
-const PORT = 3001;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+import app from "./app";
+import config from "./utils/config";
+app.listen(Number(config.PORT), config.HOST, () => {
+  console.log(`Servidor en http://${config.HOST}:${config.PORT}`);
 });

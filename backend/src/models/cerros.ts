@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
 export interface CerroData {
   nombre: string
@@ -15,7 +15,7 @@ export interface CerroData {
 
 const DIFICULTAD = ["Baja", "Media", "Alta", "Experto"];
 function dificultadValida(v: string) {
-  return DIFICULTAD.includes(v.toLowerCase());
+  return DIFICULTAD.includes(v);
 }
 
 

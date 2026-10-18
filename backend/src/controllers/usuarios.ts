@@ -1,11 +1,13 @@
 import express from "express";
 import bcrypt from "bcrypt";
+import { withUser } from "../utils/auth";
 import Usuario from "../models/usuarios";
 
 const router = express.Router();
 
 router.post("/", async (request, response) => {
   const { username, email, password } = request.body;
+  if (typeof username !== "string" || !username.trim()) { response.status(400).json({ error: "Usuario requerido" }); return; }
 
   if (typeof password !== "string" || password.length < 5) {
     response.status(400).json({
@@ -39,7 +41,7 @@ router.post("/", async (request, response) => {
 });
 
 
-router.get("/", async (_request, response) => {
+router.get("/", withUser, async (_request, response) => {
   const usuarios = await Usuario.find({});
   response.json(usuarios);
 });

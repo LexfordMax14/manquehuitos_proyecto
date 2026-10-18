@@ -1,7 +1,7 @@
 import express from "express";
 import ComentariosModel from "../models/comentarios";
 import Usuario from "../models/usuarios";
-// import { withUsuarioOpcional } from "../utils/middleware";
+import { withUser, withOptionalUser } from "../utils/auth";
 
 const router = express.Router();
 
@@ -29,7 +29,7 @@ router.get("/:idcerro", async (request, response) => {
 
 // POST
 // publicar un comentario fuera de una pagina de un cerro
-router.post("/" /*, withOptionalUser */, async (request, response) => {
+router.post("/", withOptionalUser, async (request, response) => {
   const { contenido, autor } = request.body;
 
   const usuario = request.userId
@@ -52,7 +52,7 @@ router.post("/" /*, withOptionalUser */, async (request, response) => {
 });
 
 // publicar comentarios en una página de un cerro
-router.post("/:idcerro"/*, withOptionalUser */, async (request, response) => {
+router.post("/:idcerro", withOptionalUser, async (request, response) => {
   const { contenido, autor } = request.body;
 
   const usuario = request.userId
@@ -77,12 +77,12 @@ router.post("/:idcerro"/*, withOptionalUser */, async (request, response) => {
 
 // PUT
 // editar comentario fuera de una pagina de cerro
-router.put("/:id", async (request, response) => {
+router.put("/:id", withUser, async (request, response) => {
   const comentario_id = request.params.id
   const { contenido } = request.body
 
   const comentarioActualizado = await ComentariosModel.findOneAndUpdate(
-    { _id: comentario_id, cerro: null },
+    { _id: comentario_id, usuario: request.userId, cerro: null },
     { contenido },
     { new: true, runValidators: true }
   );
@@ -95,13 +95,13 @@ router.put("/:id", async (request, response) => {
 });
 
 // editar comentario en una pagina de cerro
-router.put("/:idcerro/:id", async (request, response) => {
+router.put("/:idcerro/:id", withUser, async (request, response) => {
   const comentario_id = request.params.id
   const cerro_id = request.params.idcerro
   const { contenido } = request.body
 
   const comentarioActualizado = await ComentariosModel.findOneAndUpdate(
-    { _id: comentario_id, cerro: cerro_id },
+    { _id: comentario_id, usuario: request.userId, cerro: cerro_id },
     { contenido },
     { new: true, runValidators: true }
   );
@@ -114,18 +114,20 @@ router.put("/:idcerro/:id", async (request, response) => {
 });
 
 // eliminar comentario fuera de una pagina de un cerro
-router.delete("/:id", async (request, response) => {
+router.delete("/:id", withUser, async (request, response) => {
   const comentario_id = request.params.id
 
   const comentario = await ComentariosModel.findOneAndDelete({
     _id: comentario_id,
+    usuario: request.userId,
     cerro:null,
   })
 
   if (!comentario) {
     response.status(404).json({
       error: "Comentario no encontrado fuera de un cerro",
-    })
+    });
+    return;
   }
 
   response.status(204).end();
@@ -133,11 +135,12 @@ router.delete("/:id", async (request, response) => {
 
 // DELETE
 // eliminar comentario en una pagina de cerro
-router.delete("/:idcerro/:id", async (request, response) => {
+router.delete("/:idcerro/:id", withUser, async (request, response) => {
     const { idcerro, id } = request.params;
 
     const comentario = await ComentariosModel.findOneAndDelete({
       _id: id,
+      usuario: request.userId,
       cerro: idcerro,
     });
 
