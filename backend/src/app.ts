@@ -4,9 +4,9 @@ import mongoose from "mongoose";
 import config from "./utils/config";
 import logger from "./utils/logger";
 // import middleware from "./utils/middleware";
-import cerrosRouter from "./controllers/cerros.ts";
-import comentariosRouter from "./controllers/comentarios.ts";
-import usuariosRouter from "./controllers/usuarios.ts";
+import cerrosRouter from "./controllers/cerros";
+import comentariosRouter from "./controllers/comentarios";
+import usuariosRouter from "./controllers/usuarios";
 // import loginRouter from "./controllers/login";
 
 const app = express();

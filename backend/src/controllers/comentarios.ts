@@ -7,13 +7,13 @@ const router = express.Router();
 
 // GET
 // devuelve todos los comentarios
-router.get("/comentarios", async (request, response) => {
+router.get("/", async (request, response) => {
   const comentarios = await ComentariosModel.find({});
   response.json(comentarios);
 });
 
 // deberia devolver los comentarios con un cerro asociado
-router.get("/comentarios/:idcerro", async (request, response) => {
+router.get("/:idcerro", async (request, response) => {
   const id = request.params.idcerro;
 
   const comentarios_del_cerro = await ComentariosModel.find({
@@ -29,7 +29,7 @@ router.get("/comentarios/:idcerro", async (request, response) => {
 
 // POST
 // publicar un comentario fuera de una pagina de un cerro
-router.post("/comentarios" /*, withOptionalUser */, async (request, response) => {
+router.post("/" /*, withOptionalUser */, async (request, response) => {
   const { contenido, autor } = request.body;
 
   const usuario = request.userId
@@ -52,7 +52,7 @@ router.post("/comentarios" /*, withOptionalUser */, async (request, response) =>
 });
 
 // publicar comentarios en una página de un cerro
-router.post("/comentarios/:idcerro"/*, withOptionalUser */, async (request, response) => {
+router.post("/:idcerro"/*, withOptionalUser */, async (request, response) => {
   const { contenido, autor } = request.body;
 
   const usuario = request.userId
@@ -77,7 +77,7 @@ router.post("/comentarios/:idcerro"/*, withOptionalUser */, async (request, resp
 
 // PUT
 // editar comentario fuera de una pagina de cerro
-router.put("/comentarios/:id", async (request, response) => {
+router.put("/:id", async (request, response) => {
   const comentario_id = request.params.id
   const { contenido } = request.body
 
@@ -95,7 +95,7 @@ router.put("/comentarios/:id", async (request, response) => {
 });
 
 // editar comentario en una pagina de cerro
-router.put("/comentarios/:idcerro/:id", async (request, response) => {
+router.put("/:idcerro/:id", async (request, response) => {
   const comentario_id = request.params.id
   const cerro_id = request.params.idcerro
   const { contenido } = request.body
@@ -114,7 +114,7 @@ router.put("/comentarios/:idcerro/:id", async (request, response) => {
 });
 
 // eliminar comentario fuera de una pagina de un cerro
-router.delete("/comentarios/:id", async (request, response) => {
+router.delete("/:id", async (request, response) => {
   const comentario_id = request.params.id
 
   const comentario = await ComentariosModel.findOneAndDelete({
@@ -131,8 +131,9 @@ router.delete("/comentarios/:id", async (request, response) => {
   response.status(204).end();
 });
 
+// DELETE
 // eliminar comentario en una pagina de cerro
-router.delete("/comentarios/:idcerro/:id", async (request, response) => {
+router.delete("/:idcerro/:id", async (request, response) => {
     const { idcerro, id } = request.params;
 
     const comentario = await ComentariosModel.findOneAndDelete({
