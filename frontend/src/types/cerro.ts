@@ -1,5 +1,5 @@
-export interface Cerro {
-  id: string
+export interface RutaCerro {
+  id: number
   nombre: string
   distanciaKm: number
   duracion: string

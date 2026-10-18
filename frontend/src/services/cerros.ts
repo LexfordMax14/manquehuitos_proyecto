@@ -27,8 +27,10 @@ const getAll = () => {
   return axios.get<unknown>(cerrosUrl).then(response => parseCerros(response.data))
 }
 
-const getCerro = (id: string) => {
-  return axios.get<Cerro>(`${cerrosUrl}/${id}`).then(response => response.data)
+const getCerro = (id: string, signal?: AbortSignal) => {
+  return axios
+    .get<Cerro>(`${cerrosUrl}/${id}`, { signal })
+    .then(response => response.data)
 }
 
 type CerroData = Omit<Cerro, 'id' | 'createdAt' | 'updatedAt'>
