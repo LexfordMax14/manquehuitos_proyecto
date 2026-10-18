@@ -15,6 +15,7 @@ import {
 import { Map as MapIcon } from '@mui/icons-material'
 import type { Cerro, RutaCerro } from '../types/cerro'
 import cerros from '../services/cerros'
+import comentarios from '../services/comentarios'
 import type { ComentarioType } from '../types/comentario'
 import Comentario from '../components/Comentario'
 import MapaRutaModal from '../components/MapaRutaModal'
@@ -41,16 +42,16 @@ const DetalleCerro = () => {
 
   const addComentario = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const nuevo: ComentarioType = {
-      id: Date.now(),
-      cerro: cerroId,
-      contenido: nuevoComentario,
-      autor: nuevoAutor,
-    }
+    if (!id) return
 
-    setComentarios(cajaComentarios.concat(nuevo))
-    setNuevoAutor('')
-    setNuevoComentario('')
+    comentarios
+      .create({ contenido: nuevoComentario, autor: nuevoAutor }, id)
+      .then(nuevo => {
+        setComentarios(comentariosActuales => comentariosActuales.concat(nuevo))
+        setNuevoAutor('')
+        setNuevoComentario('')
+      })
+      .catch(() => setComentariosError('No se pudo publicar el comentario.'))
   }
 
   const mostrados = mostrarCaja ? cajaComentarios : []
@@ -194,6 +195,12 @@ const DetalleCerro = () => {
             {mostrarCaja ? 'Ocultar' : 'Mostrar'}
           </Button>
         </Stack>
+
+        {comentariosError && (
+          <Typography sx={{ color: 'error.main', mb: 2 }}>
+            {comentariosError}
+          </Typography>
+        )}
 
         <Stack component="form" onSubmit={addComentario} sx={{ gap: 2, mb: 3 }}>
           <TextField

@@ -6,6 +6,7 @@ import cerrosService from '../services/cerros'
 import BarraBusqueda from './BarraBusqueda'
 import ListaCerros from './ListaCerros'
 import type { Cerro } from '../types/cerro'
+import cerrosService from '../services/cerros'
 
 function DirectorioCerros() {
   const navigate = useNavigate()

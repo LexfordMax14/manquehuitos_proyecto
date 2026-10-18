@@ -1,5 +1,15 @@
-import app from "./app";
-import config from "./utils/config";
+import app from "./app.ts";
+import config from "./utils/config.ts";
+import logger from "./utils/logger.ts";
+
+declare global {
+  namespace Express {
+    interface Request {
+      userId?: string;
+    }
+  }
+}
+
 app.listen(Number(config.PORT), config.HOST, () => {
-  console.log(`Servidor en http://${config.HOST}:${config.PORT}`);
+  logger.info(`Server running on http://${config.HOST}:${config.PORT}`);
 });
