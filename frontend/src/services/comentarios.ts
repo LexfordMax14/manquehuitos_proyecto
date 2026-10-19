@@ -1,23 +1,33 @@
-import axios from "axios";
-import type { ComentarioType } from "../types/comentario";
-const baseUrl = "http://localhost:5174/notes";
+import { api } from './auth'
+import type { ComentarioType } from '../types/comentario'
 
-const getAll = () => {
-  const request = axios.get(baseUrl);
-  const nonExisting = {
-    id: 10000,
-    content: "This note is not saved to server",
-    important: true,
-  };
+const comentariosUrl = '/api/comentarios'
 
-  return request.then((response) => response.data.concat(nonExisting));
-};
+const getByCerro = (cerroId: string) => {
+  return api
+    .get<ComentarioType[]>(`${comentariosUrl}/${cerroId}`)
+    .then(response => response.data)
+}
 
-const create = (newObject: Omit<ComentarioType, "id">) => {
-  return axios.post(baseUrl, newObject).then((request) => request.data);
-};
+const create = (data: Pick<ComentarioType, 'contenido' | 'autor'>, cerroId: string) => {
+  return api
+    .post<ComentarioType>(`${comentariosUrl}/${cerroId}`, data)
+    .then(response => response.data)
+}
+
+const update = (cerroId: string, id: string, contenido: string) => {
+  return api
+    .put<ComentarioType>(`${comentariosUrl}/${cerroId}/${id}`, { contenido })
+    .then(response => response.data)
+}
+
+const remove = (cerroId: string, id: string) => {
+  return api.delete(`${comentariosUrl}/${cerroId}/${id}`)
+}
 
 export default {
-  getAll,
+  getByCerro,
   create,
-};
+  update,
+  remove,
+}

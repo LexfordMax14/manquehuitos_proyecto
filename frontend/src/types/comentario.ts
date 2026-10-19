@@ -1,5 +1,5 @@
 export interface ComentarioType {
-  id: number
+  id: string
   cerro: string
   contenido: string
   autor: string | null

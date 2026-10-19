@@ -13,10 +13,11 @@ function DirectorioCerros() {
   const [cerros, setCerros] = useState<Cerro[]>([])
   const [status, setStatus] = useState('loading')
   useEffect(() => {
-    const controller = new AbortController()
-    cerrosService.getAll(controller.signal).then(data => { setCerros(data); setStatus('ready') })
-      .catch(() => { if (!controller.signal.aborted) setStatus('error') })
-    return () => controller.abort()
+    cerrosService
+      .getAll()
+      .then(setCerros)
+      .then(() => setStatus(''))
+      .catch(() => setStatus('No se pudieron cargar los cerros.'))
   }, [])
   const cerrosFiltrados = cerros.filter(cerro =>
     cerro.nombre.toLocaleLowerCase().includes(busqueda.toLocaleLowerCase()),

@@ -48,6 +48,10 @@ router.post("/", withOptionalUser, async (request, response) => {
   });
 
   const comentarioGuardado = await comentario.save();
+  if (usuario) {
+    usuario.comentarios.push(comentarioGuardado._id);
+    await usuario.save();
+  }
   response.status(201).json(comentarioGuardado);
 });
 
@@ -72,6 +76,10 @@ router.post("/:idcerro", withOptionalUser, async (request, response) => {
   });
 
   const comentarioGuardado = await comentario.save();
+  if (usuario) {
+    usuario.comentarios.push(comentarioGuardado._id);
+    await usuario.save();
+  }
   response.status(201).json(comentarioGuardado);
 });
 

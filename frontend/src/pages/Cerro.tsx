@@ -18,6 +18,7 @@ import cerros from '../services/cerros'
 import type { ComentarioType } from '../types/comentario'
 import Comentario from '../components/Comentario'
 import MapaRutaModal from '../components/MapaRutaModal'
+import comentarios from '../services/comentarios'
 
 const DetalleCerro = () => {
   const { id } = useParams()
@@ -30,6 +31,8 @@ const DetalleCerro = () => {
   const [nuevoAutor, setNuevoAutor] = useState<string>('')
   const [nuevoComentario, setNuevoComentario] = useState<string>('')
   const [cajaComentarios, setComentarios] = useState<ComentarioType[]>([])
+  const [comentarioError, setComentarioError] = useState<string | null>(null)
+  const [guardandoComentario, setGuardandoComentario] = useState(false)
 
   const handleAutorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNuevoAutor(event.target.value)
@@ -41,16 +44,19 @@ const DetalleCerro = () => {
 
   const addComentario = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const nuevo: ComentarioType = {
-      id: Date.now(),
-      cerro: cerroId,
-      contenido: nuevoComentario,
-      autor: nuevoAutor,
-    }
+    setComentarioError(null)
+    setGuardandoComentario(true)
 
-    setComentarios(cajaComentarios.concat(nuevo))
-    setNuevoAutor('')
-    setNuevoComentario('')
+    comentarios.create({ contenido: nuevoComentario, autor: nuevoAutor }, cerroId)
+      .then(nuevo => {
+        setComentarios(comentariosActuales => comentariosActuales.concat(nuevo))
+        setNuevoAutor('')
+        setNuevoComentario('')
+      })
+      .catch(() => {
+        setComentarioError('No se pudo guardar el comentario. Intenta nuevamente.')
+      })
+      .finally(() => setGuardandoComentario(false))
   }
 
   const mostrados = mostrarCaja ? cajaComentarios : []
@@ -63,6 +69,15 @@ const DetalleCerro = () => {
       if (!controller.signal.aborted) setStatus(error.response?.status === 404 ? 'missing' : 'error')
     })
     return () => controller.abort()
+  }, [cerroId])
+
+  useEffect(() => {
+    setComentarioError(null)
+    comentarios.getByCerro(cerroId)
+      .then(setComentarios)
+      .catch(() => {
+        setComentarioError('No se pudieron cargar los comentarios.')
+      })
   }, [cerroId])
 
   if (status === 'missing') return <Alert severity="info">Cerro no encontrado.</Alert>
@@ -183,6 +198,12 @@ const DetalleCerro = () => {
       />
 
       <Paper sx={{ p: { xs: 2, sm: 3 } }}>
+        {comentarioError && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {comentarioError}
+          </Alert>
+        )}
+
         <Stack
           direction="row"
           sx={{ gap: 2, alignItems: 'center', justifyContent: 'space-between', mb: 2 }}
@@ -209,8 +230,13 @@ const DetalleCerro = () => {
             value={nuevoComentario}
             onChange={handleComentarioChange}
           />
-          <Button type="submit" variant="contained" sx={{ alignSelf: 'flex-end' }}>
-            Publicar
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={guardandoComentario}
+            sx={{ alignSelf: 'flex-end' }}
+          >
+            {guardandoComentario ? 'Guardando...' : 'Publicar'}
           </Button>
         </Stack>
 
