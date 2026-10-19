@@ -5,8 +5,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node out/index.js",
-    "dev": "node --watch src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx watch src/index.ts",
+    "test": "tsx --test tests/*.test.ts",
     "build:ui": "rm -rf dist && cd ../frontend && pnpm run build && cp -r dist ../backend",
     "deploy:full": "pnpm run build:ui && git add . && git commit -m uibuild && git push"
   },
@@ -16,13 +16,22 @@
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.5",
-    "typescript": "^7.0.2"
+    "typescript": "^5.9.3",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/bcrypt": "^5.0.2",
+    "tsx": "^4.20.6",
+    "supertest": "^7.1.4",
+    "@types/supertest": "^6.0.3",
+    "mongodb-memory-server": "^10.2.3"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
     "express": "^5.1.0",
     "mongoose": "^9.11.2",
-    "dotenv": "^17.2.3"
+    "dotenv": "^17.2.3",
+    "cookie-parser": "^1.4.7",
+    "jsonwebtoken": "^9.0.2"
   },
   "allowScripts": {
     "bcrypt@5.1.1": true

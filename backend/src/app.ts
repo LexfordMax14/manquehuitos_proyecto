@@ -1,13 +1,14 @@
 import express from "express";
 import mongoose from "mongoose";
-// import cookieParser from "cookie-parser";
-import config from "./utils/config.ts";
-import logger from "./utils/logger.ts";
+import cookieParser from "cookie-parser";
+import { apiErrors } from "./utils/apiErrors";
+import config from "./utils/config";
+import logger from "./utils/logger";
 // import middleware from "./utils/middleware";
-import cerrosRouter from "./controllers/cerros.ts";
-import comentariosRouter from "./controllers/comentarios.ts";
-import usuariosRouter from "./controllers/usuarios.ts";
-// import loginRouter from "./controllers/login";
+import cerrosRouter from "./controllers/cerros";
+import comentariosRouter from "./controllers/comentarios";
+import usuariosRouter from "./controllers/usuarios";
+import loginRouter from "./controllers/login";
 
 const app = express();
 
@@ -24,15 +25,17 @@ if (config.MONGODB_URI) {
 
 app.use(express.static("dist"));
 app.use(express.json());
-// app.use(cookieParser());
+app.use(cookieParser());
+app.use((_req, res, next) => { res.setHeader("Cache-Control", "no-store"); next(); });
 // app.use(middleware.requestLogger);
 
 app.use("/api/cerros", cerrosRouter);
 app.use("/api/comentarios", comentariosRouter);
 app.use("/api/usuarios", usuariosRouter);
-// app.use("/api/login", loginRouter);
+app.use("/api/login", loginRouter);
+app.use("/api/auth", loginRouter);
 
 // app.use(middleware.unknownEndpoint);
-// app.use(middleware.errorHandler);
+app.use(apiErrors);
 
 export default app;
