@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { api } from './auth'
 import type { Cerro } from '../types/cerro'
 
 const cerrosUrl = '/api/cerros'
@@ -24,11 +24,11 @@ const parseCerros = (data: unknown): Cerro[] => {
 }
 
 const getAll = () => {
-  return axios.get<unknown>(cerrosUrl).then(response => parseCerros(response.data))
+  return api.get<unknown>(cerrosUrl).then(response => parseCerros(response.data))
 }
 
 const getCerro = (id: string, signal?: AbortSignal) => {
-  return axios
+  return api
     .get<Cerro>(`${cerrosUrl}/${id}`, { signal })
     .then(response => response.data)
 }
@@ -36,15 +36,15 @@ const getCerro = (id: string, signal?: AbortSignal) => {
 type CerroData = Omit<Cerro, 'id' | 'createdAt' | 'updatedAt'>
 
 const create = (data: CerroData) => {
-  return axios.post<Cerro>(cerrosUrl, data).then(response => response.data)
+  return api.post<Cerro>(cerrosUrl, data).then(response => response.data)
 }
 
 const update = (id: string, data: Partial<CerroData>) => {
-  return axios.put<Cerro>(`${cerrosUrl}/${id}`, data).then(response => response.data)
+  return api.put<Cerro>(`${cerrosUrl}/${id}`, data).then(response => response.data)
 }
 
 const remove = (id: string) => {
-  return axios.delete(`${cerrosUrl}/${id}`)
+  return api.delete(`${cerrosUrl}/${id}`)
 }
 
 export default {
