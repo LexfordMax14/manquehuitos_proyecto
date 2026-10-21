@@ -57,7 +57,7 @@ function PostForm({ parentId, onSubmit, onCancel }: PostFormProps) {
           error={!!error}
           helperText={error}
         />
-        <Stack direction="row" spacing={1} justifyContent="flex-end">
+        <Stack direction="row" spacing={1} sx={{ justifyContent: 'flex-end' }}>
           {onCancel && (
             <Button onClick={onCancel} variant="contained" size="small" sx={{ bgcolor: brown[300], color: 'white' }}>
               Cancel

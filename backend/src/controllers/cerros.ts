@@ -1,5 +1,5 @@
 import express from "express";
-import CerrosModel from "../models/cerros.ts"
+import CerrosModel from "../models/cerros"
 
 import { withUser } from "../utils/auth";
 

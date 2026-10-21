@@ -1,6 +1,6 @@
-import app from "./app.ts";
-import config from "./utils/config.ts";
-import logger from "./utils/logger.ts";
+import app from "./app";
+import config from "./utils/config";
+import logger from "./utils/logger";
 
 declare global {
   namespace Express {

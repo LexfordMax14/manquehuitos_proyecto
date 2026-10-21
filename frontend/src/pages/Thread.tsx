@@ -43,12 +43,12 @@ function Thread({ setToast }: ThreadProps) {
   return (
     <Box sx={{ backgroundColor: '#fffaf6', padding: 2 }}>
       <Typography variant="h2" gutterBottom>Pila Completa</Typography>
-      <Typography variant="subtitle1" mb={2}>
+      <Typography variant="subtitle1" sx={{ mb: 2 }}>
         {'Han creado '}
         {loading ? <CircularProgress disableShrink size="1rem" /> : comments.length - 1}
         {' comentarios!'}
       </Typography>
-      <Box mb={4}>
+      <Box sx={{ mb: 4 }}>
         <PostForm onSubmit={data =>
           threads.createComment(data, Number(id))
             .then(comment => setComments(comments.concat(comment)))
@@ -67,7 +67,7 @@ function Thread({ setToast }: ThreadProps) {
             />
           </Paper>
           {replyToPostId === comment.id && (
-            <Box mt={2} mb={4} sx={{ ml: { xs: 4, sm: 6 } }}>
+            <Box sx={{ mt: 2, mb: 4, ml: { xs: 4, sm: 6 } }}>
               <PostForm
                 onSubmit={handleReplySubmit}
                 onCancel={() => setReplyToPostId(null)}

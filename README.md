@@ -6,7 +6,9 @@ El frontend utiliza React, TypeScript, Material UI y Leaflet. El backend utiliza
 
 ## Aplicación desplegada
 
-**URL del servidor del curso: pendiente de informar.**
+[https://fullstack.dcc.uchile.cl:7036/](https://fullstack.dcc.uchile.cl:7036/)
+
+El backend sirve también el frontend compilado. En el servidor del curso, el proyecto está en `/home/fullstack/manquehuapp/backend` y se mantiene activo con el proceso PM2 `manquehuapp-7036`.
 
 ## Requisitos para ejecutar localmente
 
@@ -63,6 +65,84 @@ npm run dev
 ```
 
 Abrir la URL que indique Vite, normalmente [http://localhost:5173](http://localhost:5173). El backend escucha normalmente en [http://127.0.0.1:3001](http://127.0.0.1:3001).
+
+## Despliegue en el servidor del curso
+
+Compilar desde la raíz del repositorio, con las dependencias de ambos proyectos instaladas:
+
+```powershell
+cd backend
+npm run build:ui
+npm run build
+cd ..
+```
+
+`build:ui` compila el frontend y lo copia a `backend/dist`. `build` genera el backend en `backend/out`.
+
+Conectarse desde una terminal local y crear la carpeta del proyecto si todavía no existe:
+
+```bash
+ssh -p 219 fullstack@fullstack.dcc.uchile.cl
+mkdir -p ~/manquehuapp/backend
+exit
+```
+
+Subir desde la raíz del repositorio, en la terminal local. No se deben transferir `node_modules` ni el `.env` local:
+
+```powershell
+scp -P 219 backend/package.json backend/package-lock.json fullstack@fullstack.dcc.uchile.cl:manquehuapp/backend/
+scp -P 219 -r backend/out backend/dist fullstack@fullstack.dcc.uchile.cl:manquehuapp/backend/
+```
+
+Entrar nuevamente por SSH y ejecutar en el servidor:
+
+```bash
+cd ~/manquehuapp/backend
+npm ci --omit=dev
+```
+
+Crear en esa carpeta un archivo `.env` con esta configuración, reemplazando los valores indicados:
+
+```dotenv
+MONGODB_URI=URI_CON_CREDENCIALES_DEL_CURSO
+MONGODB_DBNAME=fullstack
+PORT=7036
+HOST=0.0.0.0
+NODE_ENV=production
+JWT_SECRET=SECRETO_ALEATORIO_PROPIO
+```
+
+El usuario de MongoDB debe tener permisos sobre la base indicada. La carpeta del servidor no determina la base de datos: en este despliegue se usa la base compartida `fullstack`.
+
+Proteger el archivo e iniciar el proceso **solo en el primer despliegue**:
+
+```bash
+chmod 600 .env
+pm2 start npm --name manquehuapp-7036 -- run start
+pm2 save
+```
+
+Para actualizar una instalación existente, volver a compilar y subir los archivos, instalar las dependencias y reiniciar únicamente nuestro proceso:
+
+```bash
+pm2 restart manquehuapp-7036
+```
+
+Comprobar el arranque y la respuesta de la API:
+
+```bash
+pm2 logs manquehuapp-7036 --lines 30 --nostream
+curl -I http://127.0.0.1:7036/
+curl http://127.0.0.1:7036/api/cerros
+```
+
+Todos los grupos comparten el usuario del servidor. No detener, reiniciar ni eliminar procesos de otros equipos.
+
+### Datos e imágenes
+
+Los datos de MongoDB no se transfieren al subir el código. Los cerros y sus rutas deben cargarse por separado en la base de producción. La exportación local preparada contiene 6 cerros y 18 rutas; al importarlos se conservan sus identificadores para evitar duplicados. Una respuesta `[]` de `/api/cerros` significa que la colección consultada está vacía.
+
+Las imágenes originales están en `frontend/public/images` y se incluyen en `backend/dist/images` al compilar. Actualmente, el formulario de creación guarda el nombre del archivo seleccionado, pero no sube su contenido al servidor; por eso seleccionar una imagen nueva no basta para publicarla.
 
 ## Uso de IA
 

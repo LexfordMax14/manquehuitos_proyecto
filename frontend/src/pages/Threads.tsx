@@ -24,12 +24,12 @@ function Threads({ setToast }: ThreadsProps) {
   return (
     <Box sx={{ backgroundColor: '#fffaf6', padding: 2 }}>
       <Typography variant="h2" gutterBottom>Pila Completa</Typography>
-      <Typography variant="subtitle1" mb={2}>
+      <Typography variant="subtitle1" sx={{ mb: 2 }}>
         {'Han creado '}
         {loading ? <CircularProgress disableShrink size="1rem" /> : threads.length}
         {' threads!'}
       </Typography>
-      <Box mb={4}>
+      <Box sx={{ mb: 4 }}>
         <Typography variant="subtitle1">¿Crear uno nuevo?</Typography>
         <PostForm onSubmit={data =>
           threadsService.create(data)
