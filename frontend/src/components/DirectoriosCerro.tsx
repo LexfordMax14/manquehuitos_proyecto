@@ -6,10 +6,19 @@ import cerrosService from '../services/cerros'
 import BarraBusqueda from './BarraBusqueda'
 import ListaCerros from './ListaCerros'
 import type { Cerro } from '../types/cerro'
+import { useDispatch, useSelector } from 'react-redux'
+import type { RootState, AppDispatch } from '../store/store'
+import { cambiarBusqueda } from '../store/filtroSlice'
 
 function DirectorioCerros() {
   const navigate = useNavigate()
-  const [busqueda, setBusqueda] = useState('')
+
+  const dispatch = useDispatch<AppDispatch>()
+
+  const busqueda = useSelector(
+    (state: RootState) => state.filtro.busqueda
+  )
+
   const [cerros, setCerros] = useState<Cerro[]>([])
   const [status, setStatus] = useState('loading')
   useEffect(() => {
@@ -20,7 +29,9 @@ function DirectorioCerros() {
       .catch(() => setStatus('No se pudieron cargar los cerros.'))
   }, [])
   const cerrosFiltrados = cerros.filter(cerro =>
-    cerro.nombre.toLocaleLowerCase().includes(busqueda.toLocaleLowerCase()),
+    cerro.nombre
+    .toLocaleLowerCase()
+    .includes(busqueda.toLocaleLowerCase()),
   )
 
   return (
@@ -44,7 +55,12 @@ function DirectorioCerros() {
       </Stack>
 
       <Box sx={{ mb: 4 }}>
-        <BarraBusqueda busqueda={busqueda} onBusquedaChange={setBusqueda} />
+        <BarraBusqueda 
+        busqueda={busqueda} 
+        onBusquedaChange={(valor) =>
+          dispatch(cambiarBusqueda(valor))
+        } 
+        />
       </Box>
 
       {status === 'loading' && <Typography>Cargando cerros...</Typography>}

@@ -2,12 +2,10 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
 interface FiltroState {
   busqueda: string
-  dificultad: string
 }
 
 const initialState: FiltroState = {
   busqueda: '',
-  dificultad: 'Todas',
 }
 
 const filtroSlice = createSlice({
@@ -18,11 +16,7 @@ const filtroSlice = createSlice({
       state.busqueda = action.payload
     },
 
-    cambiarDificultad(state, action: PayloadAction<string>) {
-      state.dificultad = action.payload
-    },
-
-    limpiarFiltros() {
+    limpiarBusqueda() {
       return initialState
     },
   },
@@ -30,8 +24,7 @@ const filtroSlice = createSlice({
 
 export const {
   cambiarBusqueda,
-  cambiarDificultad,
-  limpiarFiltros,
+  limpiarBusqueda,
 } = filtroSlice.actions
 
 export default filtroSlice.reducer
