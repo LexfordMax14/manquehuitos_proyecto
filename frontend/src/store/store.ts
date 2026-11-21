@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import filtroReducer from './filtroSlice'
+import comentariosReducer from './comentariosSlice'
 
 export const store = configureStore({
   reducer: {
     filtro: filtroReducer,
+    comentarios: comentariosReducer,
   },
 })
 

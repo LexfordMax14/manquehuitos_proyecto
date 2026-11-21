@@ -19,6 +19,12 @@ import type { ComentarioType } from '../types/comentario'
 import Comentario from '../components/Comentario'
 import MapaRutaModal from '../components/MapaRutaModal'
 import comentarios from '../services/comentarios'
+import { useDispatch, useSelector } from 'react-redux'
+import type { RootState, AppDispatch } from '../store/store'
+import {
+  obtenerComentarios,
+  crearComentario,
+} from '../store/comentariosSlice'
 
 const DetalleCerro = () => {
   const { id } = useParams()
@@ -30,9 +36,22 @@ const DetalleCerro = () => {
   const [mostrarCaja, setCaja] = useState<boolean>(false)
   const [nuevoAutor, setNuevoAutor] = useState<string>('')
   const [nuevoComentario, setNuevoComentario] = useState<string>('')
-  const [cajaComentarios, setComentarios] = useState<ComentarioType[]>([])
-  const [comentarioError, setComentarioError] = useState<string | null>(null)
-  const [guardandoComentario, setGuardandoComentario] = useState(false)
+  const dispatch = useDispatch<AppDispatch>()
+
+  const cajaComentarios = useSelector(
+    (state: RootState) =>
+      state.comentarios.comentariosPorCerro[cerroId] ?? []
+  )
+
+  const guardandoComentario = useSelector(
+    (state: RootState) =>
+      state.comentarios.guardandoPorCerro[cerroId] ?? false
+  )
+
+  const comentarioError = useSelector(
+    (state: RootState) =>
+      state.comentarios.errorPorCerro[cerroId] ?? null
+  )
 
   const handleAutorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNuevoAutor(event.target.value)
@@ -42,21 +61,25 @@ const DetalleCerro = () => {
     setNuevoComentario(event.target.value)
   }
 
-  const addComentario = (event: React.FormEvent<HTMLFormElement>) => {
+  const addComentario = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault()
-    setComentarioError(null)
-    setGuardandoComentario(true)
 
-    comentarios.create({ contenido: nuevoComentario, autor: nuevoAutor }, cerroId)
-      .then(nuevo => {
-        setComentarios(comentariosActuales => comentariosActuales.concat(nuevo))
-        setNuevoAutor('')
-        setNuevoComentario('')
-      })
-      .catch(() => {
-        setComentarioError('No se pudo guardar el comentario. Intenta nuevamente.')
-      })
-      .finally(() => setGuardandoComentario(false))
+    try {
+      await dispatch(
+        crearComentario({
+          cerroId,
+          contenido: nuevoComentario,
+          autor: nuevoAutor,
+        })
+      ).unwrap()
+
+      setNuevoAutor('')
+      setNuevoComentario('')
+    } catch {
+      // El error ya se almacena en Redux.
+    }
   }
 
   const mostrados = mostrarCaja ? cajaComentarios : []
@@ -72,13 +95,10 @@ const DetalleCerro = () => {
   }, [cerroId])
 
   useEffect(() => {
-    setComentarioError(null)
-    comentarios.getByCerro(cerroId)
-      .then(setComentarios)
-      .catch(() => {
-        setComentarioError('No se pudieron cargar los comentarios.')
-      })
-  }, [cerroId])
+    if (cerroId) {
+      dispatch(obtenerComentarios(cerroId))
+    }
+  }, [cerroId, dispatch])
 
   if (status === 'missing') return <Alert severity="info">Cerro no encontrado.</Alert>
   if (status === 'error') return <Alert severity="error">No se pudo cargar el cerro. Intenta recargar.</Alert>
