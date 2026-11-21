@@ -5,14 +5,18 @@ import { CssBaseline, ThemeProvider } from '@mui/material'
 import theme from './theme'
 import App from './App.tsx'
 import { AuthProvider } from './auth/AuthContext'
+import { Provider } from 'react-redux'
+import { store } from './store/store'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider theme={theme}>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
       <CssBaseline />
       <BrowserRouter>
         <AuthProvider><App /></AuthProvider>
       </BrowserRouter>
     </ThemeProvider>
+    </Provider>
   </StrictMode>,
 )
