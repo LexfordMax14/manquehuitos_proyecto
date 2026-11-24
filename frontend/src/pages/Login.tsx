@@ -58,6 +58,7 @@ const Login = () => {
             value={usuario}
             onChange={e => setUsuario(e.target.value)}
             slotProps={{
+              htmlInput: { 'data-testid': 'username' },
               input: {
                 startAdornment: (
                   <InputAdornment position="start">
@@ -88,6 +89,7 @@ const Login = () => {
               value={contrasena}
               onChange={e => setContrasena(e.target.value)}
               slotProps={{
+                htmlInput: { 'data-testid': 'password' },
                 input: {
                   startAdornment: (
                     <InputAdornment position="start">

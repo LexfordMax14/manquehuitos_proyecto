@@ -10,6 +10,7 @@ import cerrosRouter from "./controllers/cerros";
 import comentariosRouter from "./controllers/comentarios";
 import usuariosRouter from "./controllers/usuarios";
 import loginRouter from "./controllers/login";
+import testingRouter from "./controllers/testing";
 
 const app = express();
 
@@ -35,6 +36,10 @@ app.use("/api/comentarios", comentariosRouter);
 app.use("/api/usuarios", usuariosRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/auth", loginRouter);
+
+if (process.env.NODE_ENV === "test") {
+  app.use("/api/testing", testingRouter);
+}
 
 // React Router maneja las paginas al abrir o recargar una URL directamente.
 app.use((req, res, next) => {
