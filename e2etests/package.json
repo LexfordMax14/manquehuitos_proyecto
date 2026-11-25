@@ -1,0 +1,17 @@
+{
+  "name": "manquehuapp-e2etests",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Pruebas E2E de Manquehuapp con Playwright",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.3"
+  }
+}

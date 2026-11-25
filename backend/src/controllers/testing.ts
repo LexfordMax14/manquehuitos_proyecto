@@ -1,4 +1,7 @@
 import express from "express";
+import CerrosModel from "../models/cerros";
+import ComentariosModel from "../models/comentarios";
+import Usuario from "../models/usuarios";
 import { rm } from "node:fs/promises";
 import path from "node:path";
 import CerrosModel from "../models/cerros";
@@ -14,6 +17,9 @@ router.post("/reset", async (_request, response) => {
   await ComentariosModel.deleteMany({});
   await Usuario.deleteMany({});
   await CerrosModel.deleteMany({});
+  response.status(204).end();
+});
+
   await rm(path.resolve(config.UPLOADS_DIR, "comentarios"), { recursive: true, force: true });
   response.status(204).end();
 });

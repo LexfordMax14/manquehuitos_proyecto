@@ -20,6 +20,12 @@ import type { ComentarioType } from '../types/comentario'
 import Comentario from '../components/Comentario'
 import MapaRutaModal from '../components/MapaRutaModal'
 import comentarios from '../services/comentarios'
+import { useDispatch, useSelector } from 'react-redux'
+import type { RootState, AppDispatch } from '../store/store'
+import {
+  obtenerComentarios,
+  crearComentario,
+} from '../store/comentariosSlice'
 import { useAuth } from '../auth/AuthContext'
 import { errorMessage } from '../services/auth'
 
@@ -38,6 +44,22 @@ const DetalleCerro = () => {
 
   const [nuevoAutor, setNuevoAutor] = useState<string>('')
   const [nuevoComentario, setNuevoComentario] = useState<string>('')
+  const dispatch = useDispatch<AppDispatch>()
+
+  const cajaComentarios = useSelector(
+    (state: RootState) =>
+      state.comentarios.comentariosPorCerro[cerroId] ?? []
+  )
+
+  const guardandoComentario = useSelector(
+    (state: RootState) =>
+      state.comentarios.guardandoPorCerro[cerroId] ?? false
+  )
+
+  const comentarioError = useSelector(
+    (state: RootState) =>
+      state.comentarios.errorPorCerro[cerroId] ?? null
+  )
   const [cajaComentarios, setComentarios] = useState<ComentarioType[]>([])
   const [comentarioError, setComentarioError] = useState<string | null>(null)
   const [guardandoComentario, setGuardandoComentario] = useState(false)
@@ -77,8 +99,25 @@ const DetalleCerro = () => {
     setNuevoComentario(event.target.value)
   }
 
-  const addComentario = (event: React.FormEvent<HTMLFormElement>) => {
+  const addComentario = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault()
+
+    try {
+      await dispatch(
+        crearComentario({
+          cerroId,
+          contenido: nuevoComentario,
+          autor: nuevoAutor,
+        })
+      ).unwrap()
+
+      setNuevoAutor('')
+      setNuevoComentario('')
+    } catch {
+      // El error ya se almacena en Redux.
+    }
     setComentarioError(null)
     setGuardandoComentario(true)
 
@@ -129,13 +168,10 @@ const DetalleCerro = () => {
   }, [cerroId])
 
   useEffect(() => {
-    setComentarioError(null)
-    comentarios.getByCerro(cerroId)
-      .then(setComentarios)
-      .catch(() => {
-        setComentarioError('No se pudieron cargar los comentarios.')
-      })
-  }, [cerroId])
+    if (cerroId) {
+      dispatch(obtenerComentarios(cerroId))
+    }
+  }, [cerroId, dispatch])
 
   if (status === 'missing') return <Alert severity="info">Cerro no encontrado.</Alert>
   if (status === 'error') return <Alert severity="error">No se pudo cargar el cerro. Intenta recargar.</Alert>
