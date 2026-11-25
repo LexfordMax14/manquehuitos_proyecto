@@ -13,7 +13,10 @@ if (process.env.NODE_ENV === "test" &&
   throw new Error("MONGODB_DBNAME_TEST debe estar definida y ser distinta de MONGODB_DBNAME");
 }
 
+// Carpeta donde se guardan las fotos subidas por los usuarios.
+const UPLOADS_DIR = process.env.UPLOADS_DIR || "uploads";
+
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) throw new Error("Falta JWT_SECRET en el entorno");
 
-export default { PORT, HOST, MONGODB_URI, MONGODB_DBNAME, JWT_SECRET};
+export default { PORT, HOST, MONGODB_URI, MONGODB_DBNAME, JWT_SECRET, UPLOADS_DIR };

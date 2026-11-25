@@ -9,8 +9,8 @@ import { withUser } from "../utils/auth";
 const router = express.Router();
 const cookieOptions = { httpOnly: true, secure: process.env.NODE_ENV === "production",
   sameSite: "strict" as const, path: "/" };
-const publicUser = (user: { _id: unknown; username: string; email: string }) =>
-  ({ id: String(user._id), username: user.username, email: user.email });
+const publicUser = (user: { _id: unknown; username: string; email: string; rol?: string }) =>
+  ({ id: String(user._id), username: user.username, email: user.email, rol: user.rol ?? "usuario" });
 
 router.post("/", async (req, res) => {
   // La cookie es sameSite y sólo aceptamos JSON, como lo envía Axios.

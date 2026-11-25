@@ -11,6 +11,7 @@ import comentariosRouter from "./controllers/comentarios";
 import usuariosRouter from "./controllers/usuarios";
 import loginRouter from "./controllers/login";
 import testingRouter from "./controllers/testing";
+import { URL_FOTOS } from "./utils/fotos";
 
 const app = express();
 
@@ -26,6 +27,9 @@ if (config.MONGODB_URI) {
 }
 
 app.use(express.static("dist"));
+app.use(URL_FOTOS, express.static(path.resolve(config.UPLOADS_DIR, "comentarios")));
+// Una foto inexistente responde 404 en vez de caer en la página de React.
+app.use(URL_FOTOS, (_req, res) => { res.status(404).json({ error: "Foto no encontrada" }); });
 app.use(express.json());
 app.use(cookieParser());
 app.use((_req, res, next) => { res.setHeader("Cache-Control", "no-store"); next(); });

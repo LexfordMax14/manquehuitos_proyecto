@@ -1,5 +1,5 @@
 import axios from 'axios'
-export type SessionUser = { id: string; username: string; email: string }
+export type SessionUser = { id: string; username: string; email: string; rol: 'usuario' | 'admin' }
 export const api = axios.create({ withCredentials: true })
 export function clearSession() {
   localStorage.removeItem('csrfToken')

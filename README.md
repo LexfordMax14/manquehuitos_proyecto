@@ -28,6 +28,7 @@ Crear `backend/.env` a partir de `backend/.env.example`. El archivo de ejemplo n
 | `PORT` | Opcional, por defecto `3001` | Puerto del backend. |
 | `HOST` | Opcional, por defecto `localhost` | Dirección donde escucha el backend. El ejemplo usa `127.0.0.1`. |
 | `NODE_ENV` | `production` en producción | Activa el atributo `secure` de la cookie de sesión, que requiere HTTPS. |
+| `UPLOADS_DIR` | Opcional, por defecto `uploads` | Carpeta donde se guardan las fotos que suben los usuarios en sus comentarios. |
 
 El frontend no necesita un archivo de variables para el desarrollo habitual. Vite redirige `/api` a `http://127.0.0.1:3001`. Si el backend escucha en otra dirección, se puede configurar `API_PROXY_TARGET` en el entorno de la terminal que inicia Vite.
 
@@ -147,6 +148,22 @@ Las imágenes originales están en `frontend/public/images` y se incluyen en `ba
 ## Uso de IA
 
 En la integración de rutas utilizamos IA para agregar los campos y el modelo de rutas al backend y adaptar su lectura desde MongoDB. Ajustamos la propuesta al estilo del repositorio y al alcance acordado: modelos y campos, sin validaciones adicionales ni herramientas de carga permanentes. Conservamos el componente de mapa realizado por Vicente Garrido.
+
+## Roles y permisos
+
+Los usuarios nuevos tienen rol `usuario`: pueden comentar, subir fotos en sus comentarios y editar sus propios comentarios durante los primeros 5 minutos. El rol `admin` puede además crear, editar y eliminar cerros, y editar o eliminar cualquier comentario sin límite de tiempo. Sin sesión solo se pueden publicar comentarios de texto.
+
+El rol de administrador no se puede elegir al registrarse. Se asigna a un usuario existente desde `backend/`, con el `.env` apuntando a la base correspondiente:
+
+```powershell
+npm run admin -- nombre_de_usuario
+```
+
+Agregar `--quitar` al final devuelve el usuario al rol `usuario`.
+
+### Fotos en comentarios
+
+Cada comentario admite hasta 4 fotos PNG, JPG o WEBP de 5 MB como máximo. El backend valida el contenido real del archivo, no solo su extensión. Las fotos se guardan en `UPLOADS_DIR/comentarios` (por defecto `backend/uploads/comentarios`) y se sirven bajo `/uploads/comentarios/`. Esa carpeta no se sube con el código ni se versiona: al actualizar el servidor no debe borrarse. Al eliminar un comentario se borran también sus fotos.
 
 ## Documentación
 

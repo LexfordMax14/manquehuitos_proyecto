@@ -15,7 +15,7 @@ function App() {
       <Routes>
         {/* Las rutas fijas van antes que la del parametro. */}
         <Route path="/" element={<DirectorioCerros />} />
-        <Route path="/form" element={<ProtectedRoute><CreateCerroForm /></ProtectedRoute>} />
+        <Route path="/form" element={<ProtectedRoute adminOnly><CreateCerroForm /></ProtectedRoute>} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/:id" element={<DetalleCerro />} />

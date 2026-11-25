@@ -8,6 +8,7 @@ export interface Comentario {
   //likes: number
   //dislikes: number  
   usuario: mongoose.Types.ObjectId
+  fotos: string[]
   cerro?: mongoose.Types.ObjectId | null;
   // padre?: mongoose.Types.ObjectId // null si no responde a nadie o el id del respondido
 }
@@ -20,6 +21,7 @@ const postSchema = new mongoose.Schema<Comentario>(
     //likes: { type: Number, default: 0 },
     //dislikes: { type: Number, default: 0 },
     usuario: { type: Schema.Types.ObjectId, ref: "Usuario"},
+    fotos: { type: [String], default: [] },
     cerro: {
       type: Schema.Types.ObjectId,
       ref: "Cerro",

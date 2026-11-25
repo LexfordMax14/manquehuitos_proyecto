@@ -1,7 +1,7 @@
 import express from "express";
 import CerrosModel from "../models/cerros"
 
-import { withUser } from "../utils/auth";
+import { withAdmin } from "../utils/auth";
 
 const router = express.Router();
 
@@ -28,7 +28,7 @@ router.get("/:idcerro", async (request, response) => {
 
 // POST
 // publicar un nuevo cerro
-router.post("/", withUser, async (request, response) => {
+router.post("/", withAdmin, async (request, response) => {
   const { nombre, 
     descripcion,
     altura, 
@@ -48,7 +48,7 @@ router.post("/", withUser, async (request, response) => {
 
 // PUT
 // editar cerro
-router.put("/:idcerro", withUser, async (request, response) => {
+router.put("/:idcerro", withAdmin, async (request, response) => {
   const cerro_id = request.params.idcerro
   const { nombre,
     descripcion,
@@ -74,7 +74,7 @@ router.put("/:idcerro", withUser, async (request, response) => {
 
 // DELETE
 // eliminar cerro
-router.delete("/:idcerro", withUser, async (request, response) => {
+router.delete("/:idcerro", withAdmin, async (request, response) => {
   const cerro_id = request.params.idcerro
 
   const cerro = await CerrosModel.findOneAndDelete({

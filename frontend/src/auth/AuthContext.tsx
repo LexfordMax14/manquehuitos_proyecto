@@ -35,11 +35,12 @@ export function useAuth() {
   if (!context) throw new Error('Falta AuthProvider')
   return context
 }
-export function ProtectedRoute({ children }: { children: ReactNode }) {
+export function ProtectedRoute({ children, adminOnly = false }: { children: ReactNode; adminOnly?: boolean }) {
   const { user, loading, failure, retry } = useAuth()
   const location = useLocation()
   if (loading) return <p>Comprobando sesión…</p>
   if (failure) return <Stack><Alert severity="error">{failure}</Alert><Button onClick={retry}>Reintentar</Button></Stack>
   if (!user) return <Navigate to="/login" replace state={{ from: location.pathname }} />
+  if (adminOnly && user.rol !== 'admin') return <Alert severity="warning" sx={{ m: 4 }}>Solo los administradores pueden acceder a esta página.</Alert>
   return children
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
   Alert,
@@ -7,12 +7,13 @@ import {
   Chip,
   Container,
   Divider,
+  IconButton,
   Paper,
   Stack,
   TextField,
   Typography,
 } from '@mui/material'
-import { Map as MapIcon } from '@mui/icons-material'
+import { AddPhotoAlternate, Close, Map as MapIcon } from '@mui/icons-material'
 import type { Cerro, RutaCerro } from '../types/cerro'
 import cerros from '../services/cerros'
 import type { ComentarioType } from '../types/comentario'
@@ -25,15 +26,22 @@ import {
   obtenerComentarios,
   crearComentario,
 } from '../store/comentariosSlice'
+import { useAuth } from '../auth/AuthContext'
+import { errorMessage } from '../services/auth'
+
+// Deben coincidir con lo que acepta el backend (que vuelve a validar el contenido real).
+const FORMATOS_FOTO = ['image/png', 'image/jpeg', 'image/webp']
+const MAX_FOTOS = 4
+const MAX_BYTES_FOTO = 5 * 1024 * 1024
 
 const DetalleCerro = () => {
   const { id } = useParams()
+  const { user } = useAuth()
   const cerroId = id ?? ''
   const [status, setStatus] = useState('loading')
   const [cerro, setCerro] = useState<Cerro | null>(null)
   const [rutaActiva, setRutaActiva] = useState<RutaCerro | null>(null)
 
-  const [mostrarCaja, setCaja] = useState<boolean>(false)
   const [nuevoAutor, setNuevoAutor] = useState<string>('')
   const [nuevoComentario, setNuevoComentario] = useState<string>('')
   const dispatch = useDispatch<AppDispatch>()
@@ -52,6 +60,36 @@ const DetalleCerro = () => {
     (state: RootState) =>
       state.comentarios.errorPorCerro[cerroId] ?? null
   )
+  const [cajaComentarios, setComentarios] = useState<ComentarioType[]>([])
+  const [comentarioError, setComentarioError] = useState<string | null>(null)
+  const [guardandoComentario, setGuardandoComentario] = useState(false)
+  const [fotos, setFotos] = useState<File[]>([])
+  const [fotosError, setFotosError] = useState<string | null>(null)
+
+  // Vistas previas de las fotos elegidas; se liberan al cambiar la selección.
+  const previews = useMemo(() => fotos.map(foto => URL.createObjectURL(foto)), [fotos])
+  useEffect(() => () => previews.forEach(url => URL.revokeObjectURL(url)), [previews])
+
+  const handleFotosChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const elegidas = Array.from(event.target.files ?? [])
+    event.target.value = '' // permite volver a elegir el mismo archivo
+    const invalida = elegidas.find(foto => !FORMATOS_FOTO.includes(foto.type))
+    const pesada = elegidas.find(foto => foto.size > MAX_BYTES_FOTO)
+    if (invalida) {
+      setFotosError(`"${invalida.name}" no es PNG, JPG ni WEBP.`)
+    } else if (pesada) {
+      setFotosError(`"${pesada.name}" pesa más de 5 MB.`)
+    } else if (fotos.length + elegidas.length > MAX_FOTOS) {
+      setFotosError(`Puedes subir como máximo ${MAX_FOTOS} fotos por comentario.`)
+    } else {
+      setFotosError(null)
+      setFotos(actuales => actuales.concat(elegidas))
+    }
+  }
+
+  const quitarFoto = (index: number) => {
+    setFotos(actuales => actuales.filter((_, i) => i !== index))
+  }
 
   const handleAutorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNuevoAutor(event.target.value)
@@ -80,9 +118,44 @@ const DetalleCerro = () => {
     } catch {
       // El error ya se almacena en Redux.
     }
+    setComentarioError(null)
+    setGuardandoComentario(true)
+
+    comentarios.create({ contenido: nuevoComentario, autor: nuevoAutor }, cerroId, fotos)
+      .then(nuevo => {
+        setComentarios(comentariosActuales => comentariosActuales.concat(nuevo))
+        setNuevoAutor('')
+        setNuevoComentario('')
+        setFotos([])
+        setFotosError(null)
+      })
+      .catch(error => {
+        setComentarioError(errorMessage(error))
+      })
+      .finally(() => setGuardandoComentario(false))
   }
 
-  const mostrados = mostrarCaja ? cajaComentarios : []
+  const editarComentario = async (comentarioId: string, contenido: string) => {
+    setComentarioError(null)
+    try {
+      const actualizado = await comentarios.update(cerroId, comentarioId, contenido)
+      setComentarios(actuales => actuales.map(c => (c.id === comentarioId ? actualizado : c)))
+    } catch (error) {
+      setComentarioError(errorMessage(error))
+      throw error
+    }
+  }
+
+  const eliminarComentario = async (comentarioId: string) => {
+    setComentarioError(null)
+    try {
+      await comentarios.remove(cerroId, comentarioId)
+      setComentarios(actuales => actuales.filter(c => c.id !== comentarioId))
+    } catch (error) {
+      setComentarioError(errorMessage(error))
+      throw error
+    }
+  }
 
   useEffect(() => {
     const controller = new AbortController()
@@ -224,17 +297,9 @@ const DetalleCerro = () => {
           </Alert>
         )}
 
-        <Stack
-          direction="row"
-          sx={{ gap: 2, alignItems: 'center', justifyContent: 'space-between', mb: 2 }}
-        >
-          <Typography variant="h6" sx={{ color: 'primary.dark' }}>
-            Comentarios ({cajaComentarios.length})
-          </Typography>
-          <Button onClick={() => setCaja(!mostrarCaja)}>
-            {mostrarCaja ? 'Ocultar' : 'Mostrar'}
-          </Button>
-        </Stack>
+        <Typography variant="h6" sx={{ color: 'primary.dark', mb: 2 }}>
+          Comentarios ({cajaComentarios.length})
+        </Typography>
 
         <Stack component="form" onSubmit={addComentario} sx={{ gap: 2, mb: 3 }}>
           <TextField
@@ -250,21 +315,79 @@ const DetalleCerro = () => {
             value={nuevoComentario}
             onChange={handleComentarioChange}
           />
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={guardandoComentario}
-            sx={{ alignSelf: 'flex-end' }}
-          >
-            {guardandoComentario ? 'Guardando...' : 'Publicar'}
-          </Button>
+          {fotos.length > 0 && (
+            <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap' }}>
+              {fotos.map((foto, index) => (
+                <Box key={previews[index]} sx={{ position: 'relative' }}>
+                  <Box
+                    component="img"
+                    src={previews[index]}
+                    alt={foto.name}
+                    sx={{ width: 88, height: 88, objectFit: 'cover', borderRadius: 1, display: 'block' }}
+                  />
+                  <IconButton
+                    size="small"
+                    aria-label={`Quitar ${foto.name}`}
+                    onClick={() => quitarFoto(index)}
+                    sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'background.paper', '&:hover': { bgcolor: 'background.paper' } }}
+                  >
+                    <Close fontSize="small" />
+                  </IconButton>
+                </Box>
+              ))}
+            </Stack>
+          )}
+
+          {fotosError && <Alert severity="warning">{fotosError}</Alert>}
+
+          <Stack direction="row" sx={{ gap: 1, alignItems: 'center', justifyContent: 'space-between' }}>
+            {user ? (
+              <Button
+                component="label"
+                startIcon={<AddPhotoAlternate />}
+                disabled={guardandoComentario || fotos.length >= MAX_FOTOS}
+              >
+                Agregar fotos
+                <input
+                  hidden
+                  type="file"
+                  multiple
+                  accept={FORMATOS_FOTO.join(',')}
+                  onChange={handleFotosChange}
+                />
+              </Button>
+            ) : (
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                Inicia sesión para subir fotos.
+              </Typography>
+            )}
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={guardandoComentario}
+            >
+              {guardandoComentario ? 'Guardando...' : 'Publicar'}
+            </Button>
+          </Stack>
+          {user && (
+            <Typography variant="caption" sx={{ color: 'text.secondary', mt: -1 }}>
+              PNG, JPG o WEBP · máximo {MAX_FOTOS} fotos de 5 MB
+            </Typography>
+          )}
         </Stack>
 
         <Divider sx={{ mb: 2 }} />
 
         <Stack component="ul" sx={{ gap: 1.5, listStyle: 'none', p: 0, m: 0 }}>
-          {mostrados.map(comentario => (
-            <Comentario key={comentario.id} comentario={comentario} />
+          {cajaComentarios.map(comentario => (
+            <Comentario
+              key={comentario.id}
+              comentario={comentario}
+              esAutor={!!user && comentario.usuario === user.id}
+              esAdmin={user?.rol === 'admin'}
+              onEditar={contenido => editarComentario(comentario.id, contenido)}
+              onEliminar={() => eliminarComentario(comentario.id)}
+            />
           ))}
         </Stack>
       </Paper>
