@@ -5,3 +5,9 @@ dist-ssr
 *.local
 
 .env
+
+# Fotos subidas por los usuarios
+uploads/
+
+# Backend compilado (npm run build)
+out/

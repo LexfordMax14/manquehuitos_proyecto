@@ -9,9 +9,18 @@ const getByCerro = (cerroId: string) => {
     .then(response => response.data)
 }
 
-const create = (data: Pick<ComentarioType, 'contenido' | 'autor'>, cerroId: string) => {
+// Con fotos se envía como multipart/form-data; sin fotos, como JSON.
+const create = (data: Pick<ComentarioType, 'contenido' | 'autor'>, cerroId: string, fotos: File[] = []) => {
+  let body: FormData | typeof data = data
+  if (fotos.length > 0) {
+    const form = new FormData()
+    form.append('contenido', data.contenido)
+    if (data.autor) form.append('autor', data.autor)
+    fotos.forEach(foto => form.append('fotos', foto))
+    body = form
+  }
   return api
-    .post<ComentarioType>(`${comentariosUrl}/${cerroId}`, data)
+    .post<ComentarioType>(`${comentariosUrl}/${cerroId}`, body)
     .then(response => response.data)
 }
 

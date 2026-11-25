@@ -36,10 +36,10 @@ test("sesión, cookie, CSRF y permisos con MongoDB temporal", async () => {
     const other = request.agent(app);
     await other.post("/api/usuarios").send({ username: "otro", email: "otro@example.test", password: "secreto123" }).expect(201);
     const otherLogin = await other.post("/api/login").send({ username: "otro", password: "secreto123" }).expect(200);
-    await other.delete(`/api/comentarios/${comment.body.id}`).set("X-CSRF-Token", otherLogin.headers["x-csrf-token"]).expect(404);
-    await agent.delete(`/api/comentarios/${comment.body.id}`).set("X-CSRF-Token", csrf).expect(204);
-    const cerro = await agent.post("/api/cerros").set("X-CSRF-Token", csrf).send({ nombre: "Cerro", altura: 100, dificultad: "Baja", imagenes: ["foto.jpg"], ubicacion: "Santiago" }).expect(201);
-    await request(app).get(`/api/cerros/${cerro.body.id}`).expect(200);
+    // Eliminar comentarios y crear cerros queda reservado al administrador (ver roles.test.ts).
+    await other.delete(`/api/comentarios/${comment.body.id}`).set("X-CSRF-Token", otherLogin.headers["x-csrf-token"]).expect(403);
+    await agent.delete(`/api/comentarios/${comment.body.id}`).set("X-CSRF-Token", csrf).expect(403);
+    await agent.post("/api/cerros").set("X-CSRF-Token", csrf).send({ nombre: "Cerro", altura: 100, dificultad: "Baja", imagenes: ["foto.jpg"], ubicacion: "Santiago" }).expect(403);
     for (const token of ["falso", jwt.sign({ id: login.body.id, csrf }, process.env.JWT_SECRET!, { expiresIn: -1 })]) {
       await request(app).get("/api/login/me").set("Cookie", `token=${token}`).set("X-CSRF-Token", csrf).expect(401);
     }

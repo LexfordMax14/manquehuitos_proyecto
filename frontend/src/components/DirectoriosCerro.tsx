@@ -3,12 +3,14 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Alert, Box, Button, Container, Stack, Typography } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import cerrosService from '../services/cerros'
+import { useAuth } from '../auth/AuthContext'
 import BarraBusqueda from './BarraBusqueda'
 import ListaCerros from './ListaCerros'
 import type { Cerro } from '../types/cerro'
 
 function DirectorioCerros() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [busqueda, setBusqueda] = useState('')
   const [cerros, setCerros] = useState<Cerro[]>([])
   const [status, setStatus] = useState('loading')
@@ -38,9 +40,11 @@ function DirectorioCerros() {
           </Typography>
         </Box>
 
-        <Button component={Link} to="/form" variant="contained" startIcon={<Add />}>
-          Crear cerro
-        </Button>
+        {user?.rol === 'admin' && (
+          <Button component={Link} to="/form" variant="contained" startIcon={<Add />}>
+            Crear cerro
+          </Button>
+        )}
       </Stack>
 
       <Box sx={{ mb: 4 }}>

@@ -10,6 +10,8 @@ import cerrosRouter from "./controllers/cerros";
 import comentariosRouter from "./controllers/comentarios";
 import usuariosRouter from "./controllers/usuarios";
 import loginRouter from "./controllers/login";
+import testingRouter from "./controllers/testing";
+import { URL_FOTOS } from "./utils/fotos";
 
 const app = express();
 
@@ -25,6 +27,9 @@ if (config.MONGODB_URI) {
 }
 
 app.use(express.static("dist"));
+app.use(URL_FOTOS, express.static(path.resolve(config.UPLOADS_DIR, "comentarios")));
+// Una foto inexistente responde 404 en vez de caer en la página de React.
+app.use(URL_FOTOS, (_req, res) => { res.status(404).json({ error: "Foto no encontrada" }); });
 app.use(express.json());
 app.use(cookieParser());
 app.use((_req, res, next) => { res.setHeader("Cache-Control", "no-store"); next(); });
@@ -35,6 +40,10 @@ app.use("/api/comentarios", comentariosRouter);
 app.use("/api/usuarios", usuariosRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/auth", loginRouter);
+
+if (process.env.NODE_ENV === "test") {
+  app.use("/api/testing", testingRouter);
+}
 
 // React Router maneja las paginas al abrir o recargar una URL directamente.
 app.use((req, res, next) => {

@@ -1,7 +1,8 @@
-import express from "express";
+import express, { type Request, type Response } from "express";
 import ComentariosModel from "../models/comentarios";
 import Usuario from "../models/usuarios";
-import { withUser, withOptionalUser } from "../utils/auth";
+import { withUser, withOptionalUser, withAdmin } from "../utils/auth";
+import { recibirFotos, guardarFotos, borrarFotos } from "../utils/fotos";
 
 const router = express.Router();
 
@@ -56,8 +57,10 @@ router.post("/", withOptionalUser, async (request, response) => {
 });
 
 // publicar comentarios en una página de un cerro
-router.post("/:idcerro", withOptionalUser, async (request, response) => {
-  const { contenido, autor } = request.body;
+// Acepta JSON o multipart/form-data con hasta 4 fotos en el campo "fotos".
+router.post("/:idcerro", withOptionalUser, recibirFotos, async (request, response) => {
+  const { contenido, autor } = request.body ?? {};
+  const archivos = (request.files as Express.Multer.File[] | undefined) ?? [];
 
   const usuario = request.userId
     ? await Usuario.findById(request.userId)
@@ -67,12 +70,21 @@ router.post("/:idcerro", withOptionalUser, async (request, response) => {
     response.status(401).json({ error: "Usuario de sesión inexistente" });
     return;
   }
+  if (archivos.length > 0 && !usuario) {
+    response.status(401).json({ error: "Inicia sesión para subir fotos" });
+    return;
+  }
+  if (typeof contenido !== "string" || !contenido.trim()) {
+    response.status(400).json({ error: "El comentario no puede estar vacío" });
+    return;
+  }
 
   const comentario = new ComentariosModel({
     contenido,
     autor: usuario ? usuario.username : autor || "Anónimo",
     usuario: usuario ? usuario._id : undefined,
-    cerro: request.params.idcerro
+    cerro: request.params.idcerro,
+    fotos: await guardarFotos(archivos),
   });
 
   const comentarioGuardado = await comentario.save();
@@ -84,82 +96,71 @@ router.post("/:idcerro", withOptionalUser, async (request, response) => {
 });
 
 // PUT
-// editar comentario fuera de una pagina de cerro
-router.put("/:id", withUser, async (request, response) => {
-  const comentario_id = request.params.id
-  const { contenido } = request.body
+// El autor puede editar su comentario solo durante los primeros 5 minutos.
+// El administrador puede editar cualquier comentario, sin plazo.
+export const PLAZO_EDICION_MS = 5 * 60 * 1000;
 
-  const comentarioActualizado = await ComentariosModel.findOneAndUpdate(
-    { _id: comentario_id, usuario: request.userId, cerro: null },
-    { contenido },
-    { new: true, runValidators: true }
-  );
-
-  if (!comentarioActualizado) {
-    response.status(404).end();
+const editarComentario = async (request: Request, response: Response, cerro: string | null) => {
+  const { contenido } = request.body;
+  if (typeof contenido !== "string" || !contenido.trim()) {
+    response.status(400).json({ error: "El comentario no puede estar vacío" });
     return;
   }
-  response.json(comentarioActualizado);
-});
+
+  const usuario = await Usuario.findById(request.userId);
+  if (!usuario) {
+    response.status(401).json({ error: "Usuario de sesión inexistente" });
+    return;
+  }
+  const esAdmin = usuario.rol === "admin";
+
+  const comentario = await ComentariosModel.findOne(
+    esAdmin
+      ? { _id: request.params.id, cerro }
+      : { _id: request.params.id, usuario: usuario._id, cerro },
+  );
+  if (!comentario) {
+    response.status(404).json({ error: "Comentario no encontrado" });
+    return;
+  }
+  if (!esAdmin && Date.now() - comentario.createdAt.getTime() > PLAZO_EDICION_MS) {
+    response.status(403).json({ error: "El plazo de 5 minutos para editar terminó" });
+    return;
+  }
+
+  comentario.contenido = contenido;
+  response.json(await comentario.save());
+};
+
+// editar comentario fuera de una pagina de cerro
+router.put("/:id", withUser, (request, response) =>
+  editarComentario(request, response, null));
 
 // editar comentario en una pagina de cerro
-router.put("/:idcerro/:id", withUser, async (request, response) => {
-  const comentario_id = request.params.id
-  const cerro_id = request.params.idcerro
-  const { contenido } = request.body
-
-  const comentarioActualizado = await ComentariosModel.findOneAndUpdate(
-    { _id: comentario_id, usuario: request.userId, cerro: cerro_id },
-    { contenido },
-    { new: true, runValidators: true }
-  );
-
-  if (!comentarioActualizado) {
-    response.status(404).end();
-    return;
-  }
-  response.json(comentarioActualizado);
-});
-
-// eliminar comentario fuera de una pagina de un cerro
-router.delete("/:id", withUser, async (request, response) => {
-  const comentario_id = request.params.id
-
-  const comentario = await ComentariosModel.findOneAndDelete({
-    _id: comentario_id,
-    usuario: request.userId,
-    cerro:null,
-  })
-
-  if (!comentario) {
-    response.status(404).json({
-      error: "Comentario no encontrado fuera de un cerro",
-    });
-    return;
-  }
-
-  response.status(204).end();
-});
+router.put("/:idcerro/:id", withUser, (request, response) =>
+  editarComentario(request, response, String(request.params.idcerro)));
 
 // DELETE
+// Solo el administrador puede eliminar comentarios.
+const eliminarComentario = async (request: Request, response: Response, cerro: string | null) => {
+  const comentario = await ComentariosModel.findOneAndDelete({ _id: request.params.id, cerro });
+  if (!comentario) {
+    response.status(404).json({ error: "Comentario no encontrado" });
+    return;
+  }
+  await borrarFotos(comentario.fotos);
+  if (comentario.usuario) {
+    await Usuario.updateOne({ _id: comentario.usuario }, { $pull: { comentarios: comentario._id } });
+  }
+  response.status(204).end();
+};
+
+// eliminar comentario fuera de una pagina de un cerro
+router.delete("/:id", withAdmin, (request, response) =>
+  eliminarComentario(request, response, null));
+
 // eliminar comentario en una pagina de cerro
-router.delete("/:idcerro/:id", withUser, async (request, response) => {
-    const { idcerro, id } = request.params;
-
-    const comentario = await ComentariosModel.findOneAndDelete({
-      _id: id,
-      usuario: request.userId,
-      cerro: idcerro,
-    });
-
-    if (!comentario) {
-      response.status(404).json({
-        error: "Comentario no encontrado en este cerro",
-      });
-      return;
-    }
-
-    response.status(204).end();
-});
+router.delete("/:idcerro/:id", withAdmin, (request, response) =>
+  eliminarComentario(request, response, String(request.params.idcerro)));
 
 export default router;
